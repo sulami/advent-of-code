@@ -20,7 +20,10 @@ use panic_halt as _;
 use usb_device::{bus::UsbBusAllocator, prelude::*};
 use usbd_serial::{SerialPort, USB_CLASS_CDC};
 
+#[cfg(feature = "day-01")]
 mod day_01;
+#[cfg(feature = "day-02")]
+mod day_02;
 
 #[arduino_nano33iot::entry]
 fn main() -> ! {
@@ -49,8 +52,10 @@ fn main() -> ! {
     delay.delay_ms(500_u16);
     usb.write(b"Getting started...\n");
 
-    // #[cfg(feature = "day-01")]
+    #[cfg(feature = "day-01")]
     let (p1, p2) = day_01::solve();
+    #[cfg(feature = "day-02")]
+    let (p1, p2) = day_02::solve();
 
     let mut s = ArrayString::<127>::new();
     writeln!(&mut s, "Part 1: {}\nPart 2: {}", p1, p2).unwrap();
