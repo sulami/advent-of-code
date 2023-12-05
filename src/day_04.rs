@@ -1,3 +1,5 @@
+#![cfg_attr(not(feature = "day-04"), allow(dead_code))]
+
 use arrayvec::ArrayVec;
 use nom::{
     bytes::complete::tag,

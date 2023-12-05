@@ -17,13 +17,9 @@ use panic_halt as _;
 
 mod serial;
 
-#[cfg(feature = "day-01")]
 mod day_01;
-#[cfg(feature = "day-02")]
 mod day_02;
-#[cfg(feature = "day-03")]
 mod day_03;
-#[cfg(feature = "day-04")]
 mod day_04;
 
 #[arduino_nano33iot::entry]
@@ -53,16 +49,18 @@ fn main() -> ! {
     delay.delay_ms(500_u16);
     usb.write(b"Getting started...\n");
 
-    let (p1, p2) = (0, 0);
-    #[cfg(feature = "day-01")]
-    let (p1, p2) = day_01::solve();
-    #[cfg(feature = "day-02")]
-    let (p1, p2) = day_02::solve();
-    #[cfg(feature = "day-03")]
-    let (p1, p2) = day_03::solve();
-    #[cfg(feature = "day-04")]
-    let (p1, p2) = day_04::solve();
-
+    let (p1, p2) = if cfg!(feature = "day-01") {
+        day_01::solve()
+    } else if cfg!(feature = "day-02") {
+        day_02::solve()
+    } else if cfg!(feature = "day-03") {
+        day_03::solve()
+    } else if cfg!(feature = "day-04") {
+        day_04::solve()
+    } else {
+        usb.write(b"need to select a day\n");
+        (0, 0)
+    };
     let mut s = ArrayString::<127>::new();
     writeln!(&mut s, "Part 1: {}\nPart 2: {}", p1, p2).unwrap();
 

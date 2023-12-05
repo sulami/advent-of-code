@@ -1,3 +1,5 @@
+#![cfg_attr(not(feature = "day-03"), allow(dead_code))]
+
 use nom::{
     character::complete::{none_of, u32},
     combinator::consumed,

@@ -1,3 +1,5 @@
+#![cfg_attr(not(feature = "day-01"), allow(dead_code))]
+
 use arrayvec::ArrayString;
 use nom::{
     branch::alt,

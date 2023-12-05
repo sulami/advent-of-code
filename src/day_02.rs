@@ -1,3 +1,5 @@
+#![cfg_attr(not(feature = "day-02"), allow(dead_code))]
+
 use nom::{
     branch::alt,
     bytes::complete::tag,
