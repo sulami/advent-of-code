@@ -6,7 +6,7 @@ use nom::{
     multi::many0_count,
 };
 
-pub fn solve() -> (u32, u32) {
+pub fn solve() -> (u64, u64) {
     let input = include_str!("../inputs/day_03");
 
     // Part 1
@@ -51,7 +51,7 @@ pub fn solve() -> (u32, u32) {
         }
     }
 
-    (sum, sum2)
+    (sum as u64, sum2 as u64)
 }
 
 fn is_part_number(input: &str, x: usize, y: usize, width: usize) -> bool {

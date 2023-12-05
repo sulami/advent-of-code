@@ -21,6 +21,7 @@ mod day_01;
 mod day_02;
 mod day_03;
 mod day_04;
+mod day_05;
 
 #[arduino_nano33iot::entry]
 fn main() -> ! {
@@ -57,6 +58,8 @@ fn main() -> ! {
         day_03::solve()
     } else if cfg!(feature = "day-04") {
         day_04::solve()
+    } else if cfg!(feature = "day-05") {
+        day_05::solve()
     } else {
         usb.write(b"need to select a day\n");
         (0, 0)

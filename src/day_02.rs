@@ -8,7 +8,7 @@ use nom::{
     IResult,
 };
 
-pub fn solve() -> (u32, u32) {
+pub fn solve() -> (u64, u64) {
     let input = include_str!("../inputs/day_02");
 
     let mut sum: u32 = 0;
@@ -22,7 +22,7 @@ pub fn solve() -> (u32, u32) {
         sum2 += record.max_red * record.max_green * record.max_blue;
     });
 
-    (sum, sum2)
+    (sum as u64, sum2 as u64)
 }
 
 #[derive(Default)]

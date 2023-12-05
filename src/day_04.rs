@@ -8,10 +8,10 @@ use nom::{
 
 const MAX_WINNING_NUMBERS: usize = 10;
 
-pub fn solve() -> (u32, u32) {
+pub fn solve() -> (u64, u64) {
     let input = include_str!("../inputs/day_04");
 
-    let part_1 = input.lines().map(winnings).map(|n| 2_u32.pow(n - 1)).sum();
+    let part_1: u32 = input.lines().map(winnings).map(|n| 2_u32.pow(n - 1)).sum();
 
     let mut part_2 = 0;
     let mut extra_cards: ArrayVec<u32, MAX_WINNING_NUMBERS> = ArrayVec::new();
@@ -33,7 +33,7 @@ pub fn solve() -> (u32, u32) {
         }
     }
 
-    (part_1, part_2)
+    (part_1 as u64, part_2 as u64)
 }
 
 fn winnings(mut card: &str) -> u32 {
