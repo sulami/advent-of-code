@@ -23,6 +23,8 @@ mod day_01;
 mod day_02;
 #[cfg(feature = "day-03")]
 mod day_03;
+#[cfg(feature = "day-04")]
+mod day_04;
 
 #[arduino_nano33iot::entry]
 fn main() -> ! {
@@ -58,6 +60,8 @@ fn main() -> ! {
     let (p1, p2) = day_02::solve();
     #[cfg(feature = "day-03")]
     let (p1, p2) = day_03::solve();
+    #[cfg(feature = "day-04")]
+    let (p1, p2) = day_04::solve();
 
     let mut s = ArrayString::<127>::new();
     writeln!(&mut s, "Part 1: {}\nPart 2: {}", p1, p2).unwrap();

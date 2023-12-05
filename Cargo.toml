@@ -19,3 +19,4 @@ nom = { version = "7.1.3", default-features = false }
 day-01 = []
 day-02 = []
 day-03 = []
+day-04 = []
