@@ -23,12 +23,12 @@ heap-allocated data structures.
 At first I was actually considering the Arduino Uno and its
 ATmega328p, but 32 kB of program space is tricky if I want to include
 the input in the binary via `include_str!()` (though I could drip-feed
-it in via serial), and 2 kB of memory will be quickly prohibitively
-small.
+it in via serial), and 2 kB of memory will be prohibitively small.
 
 Instead I'm using the more powerful SAMD21. Processing speed probably
 isn't too bad at 48 MHz, and 256 kB of program memory should be fine
-as well. We will see how far 32 kB of memory get me.
+as well. We will see how far 32 kB of memory get me, that's only 4,096
+`u64`s, minus the working stack.
 
 For obvious reasons I will only run one day at a time.
 
