@@ -23,6 +23,7 @@ mod day_03;
 mod day_04;
 mod day_05;
 mod day_06;
+mod day_07;
 
 #[arduino_nano33iot::entry]
 fn main() -> ! {
@@ -49,7 +50,7 @@ fn main() -> ! {
     let mut delay = Delay::new(core.SYST, &mut clocks);
 
     delay.delay_ms(500_u16);
-    usb.write(b"Getting started...\n");
+    usb.write(b"Ho Ho Ho...\n");
 
     let (p1, p2) = if cfg!(feature = "day-01") {
         day_01::solve()
@@ -63,6 +64,8 @@ fn main() -> ! {
         day_05::solve()
     } else if cfg!(feature = "day-06") {
         day_06::solve()
+    } else if cfg!(feature = "day-07") {
+        day_07::solve()
     } else {
         usb.write(b"need to select a day\n");
         (0, 0)
