@@ -33,7 +33,7 @@ fn navigate(input: &str, start: &str, pred: impl Fn(&str) -> bool) -> u64 {
                     .find(|line| line.starts_with(position))
                     .unwrap()[12..15];
             }
-            _ => panic!("invalid directon"),
+            _ => panic!("invalid direction"),
         }
     }
     steps
