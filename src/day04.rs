@@ -1,10 +1,6 @@
 use itertools::Itertools;
 
-pub fn solve() {
-    let input = include_str!("inputs/04");
-    println!("{}", part_1(input));
-    println!("{}", part_2(input));
-}
+super::solve!("04");
 
 fn part_1(input: &str) -> usize {
     Search::new(input).count_xmas()

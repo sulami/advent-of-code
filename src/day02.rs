@@ -6,11 +6,7 @@ use nom::{
     IResult,
 };
 
-pub fn solve() {
-    let input = include_str!("inputs/02");
-    println!("{}", part_1(input));
-    println!("{}", part_2(input));
-}
+super::solve!("02");
 
 fn part_1(input: &str) -> usize {
     input

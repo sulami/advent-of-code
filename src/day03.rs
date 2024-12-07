@@ -10,11 +10,7 @@ use nom::{
     IResult,
 };
 
-pub fn solve() {
-    let input = include_str!("inputs/03");
-    println!("{}", part_1(input));
-    println!("{}", part_2(input));
-}
+super::solve!("03");
 
 fn part_1(input: &str) -> u32 {
     parse_memory(input)
