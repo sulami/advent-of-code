@@ -4,7 +4,7 @@ use std::collections::HashSet;
 super::solve!("06");
 
 fn part_1(input: &str) -> usize {
-    Map::from_str(input).walk()
+    Map::from_str(input).walk().len()
 }
 
 fn part_2(input: &str) -> usize {
@@ -12,7 +12,17 @@ fn part_2(input: &str) -> usize {
     let mut map = Map::from_str(input);
     let initial_position = map.position;
     let initial_direction = map.direction;
-    let spaces = map.inner.iter().positions(|&c| c == '.').collect_vec();
+
+    let normally_visited = map.walk();
+    map.position = initial_position;
+    map.direction = initial_direction;
+
+    let spaces = map
+        .inner
+        .iter()
+        .enumerate()
+        .positions(|(idx, c)| *c == '.' && normally_visited.contains(&idx))
+        .collect_vec();
 
     for idx in spaces {
         map.inner[idx] = '#';
@@ -72,13 +82,13 @@ impl Map {
         false
     }
 
-    /// Walk until leaving map, returning number of positions visited.
-    fn walk(&mut self) -> usize {
+    /// Walk until leaving map, returning all positions visited.
+    fn walk(&mut self) -> HashSet<usize> {
         let mut locations = HashSet::from([self.position]);
         while self.step() {
             locations.insert(self.position);
         }
-        locations.len()
+        locations
     }
 
     fn step(&mut self) -> bool {
