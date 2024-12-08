@@ -32,7 +32,7 @@ enum Operator {
     Concat,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone)]
 struct Formula {
     target: u64,
     elements: Vec<u64>,
@@ -80,7 +80,7 @@ fn search(target: u64, current: u64, remaining: &[u64], with_concat: bool) -> bo
 fn apply_operator(current: u64, operator: Operator, other: u64) -> u64 {
     match operator {
         Operator::Plus => current + other,
-        Operator::Times => current * other,
+        Operator::Times => current.max(1) * other,
         Operator::Concat => current * 10_u64.pow(other.checked_ilog10().unwrap_or(0) + 1) + other,
     }
 }
