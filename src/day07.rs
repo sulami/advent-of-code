@@ -25,12 +25,6 @@ fn part_2(input: &str) -> u64 {
         .sum()
 }
 
-#[derive(Clone, Default)]
-struct Formula {
-    target: u64,
-    elements: Vec<u64>,
-}
-
 #[derive(Copy, Clone)]
 enum Operator {
     Plus,
@@ -38,48 +32,15 @@ enum Operator {
     Concat,
 }
 
+#[derive(Clone, Default)]
+struct Formula {
+    target: u64,
+    elements: Vec<u64>,
+}
+
 impl Formula {
     fn is_possible(&self, with_concat: bool) -> bool {
-        self.search(with_concat, &mut vec![])
-    }
-
-    fn search(&self, with_concat: bool, ops: &mut Vec<Operator>) -> bool {
-        let result = self.apply_operators(ops);
-        if result > self.target {
-            false
-        } else if ops.len() + 1 == self.elements.len() {
-            result == self.target
-        } else {
-            if with_concat {
-                ops.push(Operator::Concat);
-                if self.search(with_concat, ops) {
-                    return true;
-                }
-                ops.pop();
-            }
-            ops.push(Operator::Times);
-            if self.search(with_concat, ops) {
-                return true;
-            }
-            ops.pop();
-            ops.push(Operator::Plus);
-            if self.search(with_concat, ops) {
-                return true;
-            }
-            ops.pop();
-            false
-        }
-    }
-
-    fn apply_operators(&self, operators: &[Operator]) -> u64 {
-        self.elements.iter().skip(1).zip(operators.iter()).fold(
-            *self.elements.first().unwrap_or(&0),
-            |acc, (next, op)| match op {
-                Operator::Plus => acc + next,
-                Operator::Times => acc * next,
-                Operator::Concat => acc * 10_u64.pow(next.checked_ilog10().unwrap_or(0) + 1) + next,
-            },
-        )
+        search(self.target, 0, &self.elements, with_concat)
     }
 }
 
@@ -94,6 +55,34 @@ fn parse_input(s: &str) -> IResult<&str, Vec<Formula>> {
             },
         ),
     )(s)
+}
+
+fn search(target: u64, current: u64, remaining: &[u64], with_concat: bool) -> bool {
+    let try_operator = |op| {
+        search(
+            target,
+            apply_operator(current, op, *remaining.first().unwrap()),
+            &remaining[1..],
+            with_concat,
+        )
+    };
+    if remaining.is_empty() {
+        current == target
+    } else if current > target {
+        false
+    } else {
+        (with_concat && try_operator(Operator::Concat))
+            || try_operator(Operator::Times)
+            || try_operator(Operator::Plus)
+    }
+}
+
+fn apply_operator(current: u64, operator: Operator, other: u64) -> u64 {
+    match operator {
+        Operator::Plus => current + other,
+        Operator::Times => current * other,
+        Operator::Concat => current * 10_u64.pow(other.checked_ilog10().unwrap_or(0) + 1) + other,
+    }
 }
 
 #[cfg(test)]
