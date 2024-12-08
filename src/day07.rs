@@ -68,7 +68,7 @@ fn search(target: u64, current: u64, remaining: &[u64], with_concat: bool) -> bo
     };
     if remaining.is_empty() {
         current == target
-    } else if current > target {
+    } else if current >= target {
         false
     } else {
         (with_concat && try_operator(Operator::Concat))
