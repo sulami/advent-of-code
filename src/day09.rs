@@ -15,6 +15,7 @@ fn part_1(input: &str) -> usize {
 
 fn part_2(input: &str) -> usize {
     let mut disk = expand_disk(input);
+    let mut free_spaces = spaces(&disk);
     let mut head = disk.len() - 1;
     while head > 0 {
         if let Some(file_id) = disk[head] {
@@ -23,14 +24,13 @@ fn part_2(input: &str) -> usize {
                 .rev()
                 .take_while(|&x| *x == Some(file_id))
                 .count();
-            if let Some(&(offset, _)) = spaces(&disk, head.saturating_sub(required))
-                .iter()
-                .find(|(_, available)| *available >= required)
-            {
-                for idx in 0..required {
-                    disk[offset + idx] = Some(file_id);
-                    disk[head - idx] = None;
-                }
+            if let Some(space) = free_spaces.iter_mut().find(|(offset, available)| {
+                *offset < head.saturating_sub(required) && *available >= required
+            }) {
+                disk[space.0..space.0 + required].fill(Some(file_id));
+                disk[head + 1 - required..=head].fill(None);
+                space.0 += required;
+                space.1 -= required;
             }
             head = head.saturating_sub(required);
         } else {
@@ -58,10 +58,10 @@ fn checksum(disk: &[Option<usize>]) -> usize {
         .sum()
 }
 
-fn spaces(disk: &[Option<usize>], up_to: usize) -> Vec<(usize, usize)> {
+fn spaces(disk: &[Option<usize>]) -> Vec<(usize, usize)> {
     let mut rv = vec![];
     let mut offset = 0;
-    while offset < up_to {
+    while offset < disk.len() {
         if disk[offset].is_none() {
             let size = disk[offset..].iter().take_while(|x| x.is_none()).count();
             rv.push((offset, size));
