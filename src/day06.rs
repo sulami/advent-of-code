@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use rayon::prelude::*;
 use rustc_hash::FxHashSet;
 
 super::solve!("06");
@@ -13,7 +14,6 @@ fn part_1(input: &str) -> usize {
 
 fn part_2(input: &str) -> usize {
     let mut map = Map::from_str(input);
-    let mut count = 0;
     let initial_position = map.position;
     let initial_direction = map.direction;
 
@@ -21,25 +21,17 @@ fn part_2(input: &str) -> usize {
     map.position = initial_position;
     map.direction = initial_direction;
 
-    let spaces = map
-        .inner
+    normally_visited
         .iter()
-        .enumerate()
-        .positions(|(idx, c)| *c == '.' && normally_visited.contains(&idx))
-        .collect_vec();
-
-    for idx in spaces {
-        map.inner[idx] = '#';
-        if map.will_loop() {
-            count += 1;
-        }
-
-        // Reset the map state.
-        map.inner[idx] = '.';
-        map.position = initial_position;
-        map.direction = initial_direction;
-    }
-    count
+        .filter(|&idx| *idx != initial_position)
+        .copied()
+        .par_bridge()
+        .filter(|&idx| {
+            let mut map = map.clone();
+            map.inner[idx] = '#';
+            map.will_loop()
+        })
+        .count()
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
