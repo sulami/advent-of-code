@@ -1,6 +1,5 @@
-use std::collections::HashSet;
-
 use itertools::Itertools;
+use rustc_hash::FxHashSet;
 
 super::solve!("06");
 
@@ -77,7 +76,7 @@ impl Map {
 
     /// Walk until leaving or looping, returning whether looped.
     fn will_loop(&mut self) -> bool {
-        let mut locations = HashSet::from([(self.position, self.direction)]);
+        let mut locations = FxHashSet::from_iter([(self.position, self.direction)]);
         while self.step() {
             if locations.contains(&(self.position, self.direction)) {
                 return true;
@@ -88,8 +87,8 @@ impl Map {
     }
 
     /// Walk until leaving map, returning all positions visited.
-    fn walk(&mut self) -> HashSet<usize> {
-        let mut locations = HashSet::from([self.position]);
+    fn walk(&mut self) -> FxHashSet<usize> {
+        let mut locations = FxHashSet::from_iter([self.position]);
         while self.step() {
             locations.insert(self.position);
         }
