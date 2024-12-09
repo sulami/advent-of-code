@@ -1,14 +1,19 @@
-use nom::bytes::complete::tag;
-use nom::character::complete::{newline, space1, u64 as parse_u64};
-use nom::combinator::map;
-use nom::multi::separated_list1;
-use nom::sequence::separated_pair;
-use nom::IResult;
+use nom::{
+    bytes::complete::tag,
+    character::complete::{newline, space1, u64 as parse_u64},
+    combinator::map,
+    multi::separated_list1,
+    sequence::separated_pair,
+    IResult,
+};
 
 super::solve!("07");
 
-fn part_1(input: &str) -> u64 {
-    let formulas = parse_input(input).expect("invalid input").1;
+fn parse(input: &str) -> Vec<Formula> {
+    parse_input(input).expect("invalid input").1
+}
+
+fn part_1(formulas: &[Formula]) -> u64 {
     formulas
         .iter()
         .filter(|f| f.is_possible(false))
@@ -16,8 +21,7 @@ fn part_1(input: &str) -> u64 {
         .sum()
 }
 
-fn part_2(input: &str) -> u64 {
-    let formulas = parse_input(input).expect("invalid input").1;
+fn part_2(formulas: &[Formula]) -> u64 {
     formulas
         .iter()
         .filter(|f| f.is_possible(true))
@@ -102,11 +106,11 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(part_1(INPUT), 3749);
+        assert_eq!(part_1(&parse(INPUT)), 3749);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(part_2(INPUT), 11387);
+        assert_eq!(part_2(&parse(INPUT)), 11387);
     }
 }

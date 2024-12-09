@@ -2,12 +2,16 @@ use itertools::Itertools;
 
 super::solve!("04");
 
-fn part_1(input: &str) -> usize {
-    Search::new(input).count_xmas()
+fn parse(input: &str) -> Search {
+    Search::new(input)
 }
 
-fn part_2(input: &str) -> usize {
-    Search::new(input).count_x_mas()
+fn part_1(search: &Search) -> usize {
+    search.count_xmas()
+}
+
+fn part_2(search: &Search) -> usize {
+    search.count_x_mas()
 }
 
 struct Search {
@@ -84,7 +88,8 @@ impl Search {
 mod tests {
     use super::*;
 
-    const INPUT: &str = "MMMSXXMASM
+    const INPUT: &str = "\
+MMMSXXMASM
 MSAMXMSMSA
 AMXSXMAAMM
 MSAMASMSMX
@@ -97,11 +102,11 @@ MXMXAXMASX";
 
     #[test]
     fn test_part_1() {
-        assert_eq!(part_1(INPUT), 18);
+        assert_eq!(part_1(&parse(INPUT)), 18);
     }
 
     #[test]
     fn test_part_2() {
-        assert_eq!(part_2(INPUT), 9);
+        assert_eq!(part_2(&parse(INPUT)), 9);
     }
 }

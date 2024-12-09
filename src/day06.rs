@@ -1,15 +1,20 @@
-use itertools::Itertools;
 use std::collections::HashSet;
 
+use itertools::Itertools;
+
 super::solve!("06");
+
+fn parse(input: &str) -> &str {
+    input
+}
 
 fn part_1(input: &str) -> usize {
     Map::from_str(input).walk().len()
 }
 
 fn part_2(input: &str) -> usize {
-    let mut count = 0;
     let mut map = Map::from_str(input);
+    let mut count = 0;
     let initial_position = map.position;
     let initial_direction = map.direction;
 
@@ -168,11 +173,11 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(part_1(INPUT), 41);
+        assert_eq!(part_1(&parse(INPUT)), 41);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(part_2(INPUT), 6);
+        assert_eq!(part_2(&parse(INPUT)), 6);
     }
 }

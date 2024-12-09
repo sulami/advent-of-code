@@ -24,10 +24,10 @@ fn main() {
 macro_rules! solve {
     ($day:expr) => {
         pub fn solve() {
-            let input = include_str!(concat!("inputs/", $day));
+            let input = parse(include_str!(concat!("inputs/", $day)));
             println!("Day {}:", $day);
-            println!("  {:>15}", part_1(input));
-            println!("  {:>15}", part_2(input));
+            println!("  {:>15}", part_1(&input));
+            println!("  {:>15}", part_2(&input));
         }
     };
 }

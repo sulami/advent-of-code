@@ -3,25 +3,25 @@ use nom::{
     character::complete::{i32 as parse_i32, multispace1},
     combinator::all_consuming,
     multi::separated_list1,
-    IResult,
 };
 
 super::solve!("02");
 
-fn part_1(input: &str) -> usize {
+fn parse(input: &str) -> Vec<Vec<i32>> {
+    let mut parse_report = all_consuming(separated_list1(multispace1::<&str, ()>, parse_i32));
     input
         .lines()
         .map(|l| parse_report(l).expect("invalid report").1)
-        .filter(|r| safe_report(r))
-        .count()
+        .collect()
 }
 
-fn part_2(input: &str) -> usize {
+fn part_1(reports: &[Vec<i32>]) -> usize {
+    reports.iter().filter(|r| safe_report(r)).count()
+}
+
+fn part_2(reports: &[Vec<i32>]) -> usize {
     let mut count = 0;
-    for report in input
-        .lines()
-        .map(|l| parse_report(l).expect("invalid report").1)
-    {
+    for report in reports {
         if safe_report(&report) {
             count += 1;
         } else {
@@ -60,15 +60,12 @@ fn safe_report(report: &[i32]) -> bool {
     true
 }
 
-fn parse_report(s: &str) -> IResult<&str, Vec<i32>> {
-    all_consuming(separated_list1(multispace1, parse_i32))(s)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    const INPUT: &str = "7 6 4 2 1
+    const INPUT: &str = "\
+7 6 4 2 1
 1 2 7 8 9
 9 7 6 2 1
 1 3 2 4 5
@@ -77,11 +74,11 @@ mod tests {
 
     #[test]
     fn test_part_1() {
-        assert_eq!(part_1(INPUT), 2);
+        assert_eq!(part_1(&parse(INPUT)), 2);
     }
 
     #[test]
     fn test_part_2() {
-        assert_eq!(part_2(INPUT), 4);
+        assert_eq!(part_2(&parse(INPUT)), 4);
     }
 }

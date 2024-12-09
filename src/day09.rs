@@ -2,8 +2,12 @@ use itertools::{repeat_n, Itertools};
 
 super::solve!("09");
 
-fn part_1(input: &str) -> usize {
-    let mut disk = expand_disk(input);
+fn parse(input: &str) -> Vec<Option<usize>> {
+    expand_disk(input)
+}
+
+fn part_1(disk: &[Option<usize>]) -> usize {
+    let mut disk = disk.to_vec();
     let mut seen = 0;
     while let Some(free) = disk.iter().skip(seen).position(Option::is_none) {
         disk[seen + free] = disk.pop().unwrap();
@@ -15,8 +19,8 @@ fn part_1(input: &str) -> usize {
     checksum(&disk)
 }
 
-fn part_2(input: &str) -> usize {
-    let mut disk = expand_disk(input);
+fn part_2(disk: &[Option<usize>]) -> usize {
+    let mut disk = disk.to_vec();
     let mut free_spaces = spaces(&disk);
     let mut head = disk.len() - 1;
     while head > 0 {
@@ -83,11 +87,11 @@ mod tests {
 
     #[test]
     fn test_part_1() {
-        assert_eq!(part_1(INPUT), 1928);
+        assert_eq!(part_1(&parse(INPUT)), 1928);
     }
 
     #[test]
     fn test_part_2() {
-        assert_eq!(part_2(INPUT), 2858);
+        assert_eq!(part_2(&parse(INPUT)), 2858);
     }
 }

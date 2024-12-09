@@ -2,6 +2,10 @@ use itertools::Itertools;
 
 super::solve!("08");
 
+fn parse(input: &str) -> &str {
+    input
+}
+
 fn part_1(input: &str) -> usize {
     find_antinodes(input, false)
 }
