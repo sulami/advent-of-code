@@ -4,8 +4,10 @@ super::solve!("09");
 
 fn part_1(input: &str) -> usize {
     let mut disk = expand_disk(input);
-    while let Some(free) = disk.iter().position(Option::is_none) {
-        disk[free] = disk.pop().unwrap();
+    let mut seen = 0;
+    while let Some(free) = disk.iter().skip(seen).position(Option::is_none) {
+        disk[seen + free] = disk.pop().unwrap();
+        seen += free;
         while disk.last().unwrap().is_none() {
             disk.pop();
         }
