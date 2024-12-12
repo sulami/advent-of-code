@@ -24,11 +24,10 @@ fn part_2(input: &str) -> usize {
     normally_visited
         .iter()
         .filter(|&idx| *idx != initial_position)
-        .copied()
         .par_bridge()
         .filter(|&idx| {
             let mut map = map.clone();
-            map.inner[idx] = '#';
+            map.inner[*idx] = '#';
             map.will_loop()
         })
         .count()
@@ -70,10 +69,9 @@ impl Map {
     fn will_loop(&mut self) -> bool {
         let mut locations = FxHashSet::from_iter([(self.position, self.direction)]);
         while self.step() {
-            if locations.contains(&(self.position, self.direction)) {
+            if !locations.insert((self.position, self.direction)) {
                 return true;
             }
-            locations.insert((self.position, self.direction));
         }
         false
     }
@@ -92,10 +90,13 @@ impl Map {
         if self.is_leaving() {
             return false;
         }
-        // If facing an obstacle, turn.
-        if self.is_facing_obstacle() {
-            self.turn();
+        // If not facing an obstacle, walk and done
+        if !self.is_facing_obstacle() {
+            self.position = self.next_position();
+            return true;
         }
+        // If facing an obstacle, turn.
+        self.turn();
         // Are we leaving after turning?
         if self.is_leaving() {
             return false;

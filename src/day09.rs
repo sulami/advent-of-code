@@ -30,9 +30,11 @@ fn part_2(disk: &[Option<usize>]) -> usize {
                 .rev()
                 .take_while(|&x| *x == Some(file_id))
                 .count();
-            if let Some(space) = free_spaces.iter_mut().find(|(offset, available)| {
-                *offset < head.saturating_sub(required) && *available >= required
-            }) {
+            if let Some(space) = free_spaces
+                .iter_mut()
+                .take_while(|(offset, _)| *offset < head.saturating_sub(required))
+                .find(|(_, available)| *available >= required)
+            {
                 disk[space.0..space.0 + required].fill(Some(file_id));
                 disk[head + 1 - required..=head].fill(None);
                 space.0 += required;
