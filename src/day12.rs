@@ -2,8 +2,9 @@ use rustc_hash::FxHashSet;
 
 super::solve!("12");
 
-type Plot = (char, (usize, usize));
-type Region = FxHashSet<(usize, usize)>;
+type Plant = char;
+type Plot = (usize, usize);
+type Region = FxHashSet<Plot>;
 
 fn parse(input: &str) -> Vec<Region> {
     let mut plots = FxHashSet::default();
@@ -23,7 +24,11 @@ fn parse(input: &str) -> Vec<Region> {
     regions
 }
 
-fn fill_region((plant, (x, y)): Plot, from: &mut FxHashSet<Plot>, to: &mut Region) {
+fn fill_region(
+    (plant, (x, y)): (Plant, Plot),
+    from: &mut FxHashSet<(Plant, Plot)>,
+    to: &mut Region,
+) {
     [
         (x.wrapping_sub(1), y),
         (x + 1, y),
@@ -70,61 +75,61 @@ fn price(region: &Region) -> usize {
 }
 
 fn price_with_bulk_discount(region: &Region) -> usize {
-    // True if this plot has a non-region plot anywhere in its eight surrounding spaces.
-    let is_perimeter = |&(x, y): &(usize, usize)| -> bool {
-        [
-            (x.wrapping_sub(1), y.wrapping_sub(1)),
-            (x.wrapping_sub(1), y),
-            (x.wrapping_sub(1), y + 1),
-            (x, y + 1),
-            (x, y.wrapping_sub(1)),
-            (x + 1, y.wrapping_sub(1)),
-            (x + 1, y),
-            (x + 1, y + 1),
-        ]
-        .iter()
-        .any(|neighbour| !region.contains(neighbour))
-    };
-
-    // Counts the corners of this plot that are either convex or concave corners of the
-    // entire region, by looking at two adjacent non-diagonal neighbours as well as the
-    // diagonal one between them.
-    let external_corners = |(x, y): (usize, usize)| -> usize {
-        [
-            (
-                (x.wrapping_sub(1), y),
-                (x, y.wrapping_sub(1)),
-                (x.wrapping_sub(1), y.wrapping_sub(1)),
-            ),
-            (
-                (x, y.wrapping_sub(1)),
-                (x + 1, y),
-                (x + 1, y.wrapping_sub(1)),
-            ),
-            ((x + 1, y), (x, y + 1), (x + 1, y + 1)),
-            (
-                (x, y + 1),
-                (x.wrapping_sub(1), y),
-                (x.wrapping_sub(1), y + 1),
-            ),
-        ]
-        .iter()
-        .filter(|(adj_a, adj_b, diag)| {
-            let a = region.contains(adj_a);
-            let b = region.contains(adj_b);
-            let c = region.contains(diag);
-            a && b && !c || !a && !b
-        })
-        .count()
-    };
-
     let area = region.len();
     let corners: usize = region
         .iter()
-        .filter(|&plot| is_perimeter(plot))
-        .map(|&plot| external_corners(plot))
+        .filter(|&plot| is_perimeter(plot, region))
+        .map(|&plot| external_corners(plot, region))
         .sum();
     area * corners
+}
+
+/// True if this plot has a non-region plot anywhere in its eight surrounding spaces.
+fn is_perimeter(&(x, y): &Plot, region: &Region) -> bool {
+    [
+        (x.wrapping_sub(1), y.wrapping_sub(1)),
+        (x.wrapping_sub(1), y),
+        (x.wrapping_sub(1), y + 1),
+        (x, y + 1),
+        (x, y.wrapping_sub(1)),
+        (x + 1, y.wrapping_sub(1)),
+        (x + 1, y),
+        (x + 1, y + 1),
+    ]
+    .iter()
+    .any(|neighbour| !region.contains(neighbour))
+}
+
+/// Counts the corners of this plot that are either convex or concave corners of the
+/// entire region, by looking at two adjacent non-diagonal neighbours as well as the
+/// diagonal one between them.
+fn external_corners((x, y): Plot, region: &Region) -> usize {
+    [
+        (
+            (x.wrapping_sub(1), y),
+            (x, y.wrapping_sub(1)),
+            (x.wrapping_sub(1), y.wrapping_sub(1)),
+        ),
+        (
+            (x, y.wrapping_sub(1)),
+            (x + 1, y),
+            (x + 1, y.wrapping_sub(1)),
+        ),
+        ((x + 1, y), (x, y + 1), (x + 1, y + 1)),
+        (
+            (x, y + 1),
+            (x.wrapping_sub(1), y),
+            (x.wrapping_sub(1), y + 1),
+        ),
+    ]
+    .iter()
+    .filter(|(adj_a, adj_b, diag)| {
+        let a = region.contains(adj_a);
+        let b = region.contains(adj_b);
+        let c = region.contains(diag);
+        a && b && !c || !a && !b
+    })
+    .count()
 }
 
 #[cfg(test)]
