@@ -30,10 +30,13 @@ fn main() {
 macro_rules! solve {
     ($day:expr) => {
         pub fn solve() {
+            let start = std::time::Instant::now();
             let input = parse(include_str!(concat!("inputs/", $day)));
-            println!("Day {}:", $day);
-            println!("  {:>15}", part_1(&input));
-            println!("  {:>15}", part_2(&input));
+            let a = part_1(&input);
+            let b = part_2(&input);
+            println!("Day {}:  ({:>3} ms)", $day, start.elapsed().as_millis());
+            println!("  {:>15}", a);
+            println!("  {:>15}", b);
         }
     };
 }
