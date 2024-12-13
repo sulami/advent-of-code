@@ -68,6 +68,7 @@ impl Map {
     /// Walk until leaving or looping, returning whether looped.
     fn will_loop(&mut self) -> bool {
         let mut locations = FxHashSet::from_iter([(self.position, self.direction)]);
+        locations.reserve(10_000);
         while self.step() {
             if !locations.insert((self.position, self.direction)) {
                 return true;
@@ -79,6 +80,7 @@ impl Map {
     /// Walk until leaving map, returning all positions visited.
     fn walk(&mut self) -> FxHashSet<usize> {
         let mut locations = FxHashSet::from_iter([self.position]);
+        locations.reserve(10_000);
         while self.step() {
             locations.insert(self.position);
         }
