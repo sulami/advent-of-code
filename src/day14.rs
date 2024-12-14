@@ -53,27 +53,12 @@ fn part_2(robots: &[Robot]) -> usize {
         (11, 7)
     };
     let mut robots = robots.to_vec();
-    1 + (0..)
-        .position(|_| {
-            robots.iter_mut().for_each(|b| b.step(size));
-            let mut y_positions = [0; 103];
-            for robot in robots.iter() {
-                y_positions[robot.position.y as usize] += 1;
-            }
-            let busiest_y = y_positions.iter().position_max().unwrap_or_default() as i32;
-            if y_positions[busiest_y as usize] < 20 {
-                return false;
-            }
-            20 < robots
-                .iter()
-                .filter(|b| b.position.y == busiest_y)
-                .map(|b| b.position.x)
-                .sorted_unstable()
-                .tuple_windows()
-                .filter(|(a, b)| a.abs_diff(*b) == 1)
-                .count()
-        })
-        .unwrap()
+    let mut steps = 0;
+    while !has_line(&robots) {
+        steps += 1;
+        robots.iter_mut().for_each(|b| b.step(size));
+    }
+    steps
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -111,6 +96,25 @@ fn safety_factor(robots: &[Robot], (width, height): (usize, usize)) -> usize {
     (1..=4)
         .map(|q| quadrants.get(&q).unwrap_or(&vec![]).len())
         .product()
+}
+
+fn has_line(robots: &[Robot]) -> bool {
+    let mut y_positions = [0; 103];
+    for robot in robots {
+        y_positions[robot.position.y as usize] += 1;
+    }
+    let busiest_y = y_positions.iter().position_max().unwrap_or_default() as i32;
+    if y_positions[busiest_y as usize] < 20 {
+        return false;
+    }
+    20 < robots
+        .iter()
+        .filter(|b| b.position.y == busiest_y)
+        .map(|b| b.position.x)
+        .sorted_unstable()
+        .tuple_windows()
+        .filter(|(a, b)| a.abs_diff(*b) == 1)
+        .count()
 }
 
 #[cfg(test)]
