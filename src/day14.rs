@@ -9,7 +9,6 @@ use nom::{
 super::solve!("14");
 
 fn parse(input: &str) -> Vec<Robot> {
-    // p=0,4 v=3,-3
     let parse_robot = |s| -> IResult<&str, Robot> {
         let (s, position) =
             preceded(tag("p="), separated_pair(parse_i32, char(','), parse_i32))(s)?;
@@ -43,9 +42,7 @@ fn part_1(robots: &[Robot]) -> usize {
         (11, 7)
     };
     let mut robots = robots.to_vec();
-    for _ in 0..100 {
-        robots.iter_mut().for_each(|b| b.step(size));
-    }
+    (0..100).for_each(|_| robots.iter_mut().for_each(|b| b.step(size)));
     safety_factor(&robots, size)
 }
 
@@ -59,19 +56,22 @@ fn part_2(robots: &[Robot]) -> usize {
     1 + (0..)
         .position(|_| {
             robots.iter_mut().for_each(|b| b.step(size));
-            let robots_by_y = robots.iter().into_group_map_by(|b| b.position.y);
-            robots_by_y
-                .into_values()
-                .filter(|bs| bs.len() >= 20)
-                .any(|bs| {
-                    bs.iter()
-                        .map(|b| b.position.x)
-                        .sorted_unstable()
-                        .tuple_windows()
-                        .filter(|(a, b)| a.abs_diff(*b) == 1)
-                        .count()
-                        >= 20
-                })
+            let mut y_positions = [0; 103];
+            for robot in robots.iter() {
+                y_positions[robot.position.y as usize] += 1;
+            }
+            let busiest_y = y_positions.iter().position_max().unwrap_or_default() as i32;
+            if y_positions[busiest_y as usize] < 20 {
+                return false;
+            }
+            20 < robots
+                .iter()
+                .filter(|b| b.position.y == busiest_y)
+                .map(|b| b.position.x)
+                .sorted_unstable()
+                .tuple_windows()
+                .filter(|(a, b)| a.abs_diff(*b) == 1)
+                .count()
         })
         .unwrap()
 }
