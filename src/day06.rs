@@ -22,9 +22,8 @@ fn part_2(input: &str) -> usize {
     map.direction = initial_direction;
 
     normally_visited
-        .iter()
+        .par_iter()
         .filter(|&idx| *idx != initial_position)
-        .par_bridge()
         .filter(|&idx| {
             let mut map = map.clone();
             map.inner[*idx] = '#';
@@ -67,12 +66,12 @@ impl Map {
 
     /// Walk until leaving or looping, returning whether looped.
     fn will_loop(&mut self) -> bool {
-        let mut locations = FxHashSet::from_iter([(self.position, self.direction)]);
-        locations.reserve(10_000);
+        let mut locations = [[false; 4]; 16_900];
         while self.step() {
-            if !locations.insert((self.position, self.direction)) {
+            if locations[self.position][self.direction as usize] {
                 return true;
             }
+            locations[self.position][self.direction as usize] = true;
         }
         false
     }
@@ -167,11 +166,11 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(part_1(&parse(INPUT)), 41);
+        assert_eq!(part_1(parse(INPUT)), 41);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(part_2(&parse(INPUT)), 6);
+        assert_eq!(part_2(parse(INPUT)), 6);
     }
 }
