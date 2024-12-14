@@ -1,5 +1,5 @@
 use nom::{
-    bytes::complete::tag, character::complete::u64 as parse_u32, multi::separated_list0, IResult,
+    bytes::complete::tag, character::complete::i64 as parse_u32, multi::separated_list0, IResult,
 };
 
 super::solve!("13");
@@ -37,8 +37,8 @@ fn parse(input: &str) -> Vec<Machine> {
 
 #[derive(Debug, Clone)]
 struct Coord {
-    x: u64,
-    y: u64,
+    x: i64,
+    y: i64,
 }
 
 #[derive(Debug, Clone)]
@@ -49,47 +49,26 @@ struct Machine {
 }
 
 impl Machine {
-    fn tokens_to_win(&self) -> Option<u64> {
-        let mut tokens = None;
+    fn tokens_to_win(&self) -> Option<i64> {
+        let Self { a, b, prize } = self;
 
-        // Don't even ask.
-        if self.prize.y * self.a.x <= self.prize.x * self.a.y
-            && (self.prize.x * self.a.y - self.prize.y * self.a.x)
-                % (self.a.y * self.b.x - self.a.x * self.b.y)
-                == 0
-        {
-            let b_pushes = (self.prize.x * self.a.y - self.prize.y * self.a.x)
-                / (self.a.y * self.b.x - self.a.x * self.b.y);
-            if (self.prize.x - b_pushes * self.b.x) % self.a.x == 0 {
-                let a_pushes = (self.prize.x - b_pushes * self.b.x) / self.a.x;
-                tokens = Some(3 * a_pushes + b_pushes);
+        if 0 == (prize.x * a.y - prize.y * a.x) % (a.y * b.x - a.x * b.y) {
+            let b_pushes = (prize.x * a.y - prize.y * a.x) / (a.y * b.x - a.x * b.y);
+            if 0 == (prize.x - b_pushes * b.x) % a.x {
+                let a_pushes = (prize.x - b_pushes * b.x) / a.x;
+                return Some(3 * a_pushes + b_pushes);
             }
         }
 
-        if self.prize.y * self.b.x <= self.prize.x * self.b.y
-            && (self.prize.x * self.b.y - self.prize.y * self.b.x)
-                % (self.a.x * self.b.y - self.a.y * self.b.x)
-                == 0
-        {
-            let a_pushes = (self.prize.x * self.b.y - self.prize.y * self.b.x)
-                / (self.a.x * self.b.y - self.a.y * self.b.x);
-            if (self.prize.x - a_pushes * self.a.x) % self.b.x == 0 {
-                let b_pushes = (self.prize.x - a_pushes * self.a.x) / self.b.x;
-                tokens = tokens.map_or(Some(3 * a_pushes + b_pushes), |t| {
-                    Some(t.min(3 * a_pushes + b_pushes))
-                });
-            }
-        }
-
-        tokens
+        None
     }
 }
 
-fn part_1(machines: &[Machine]) -> u64 {
+fn part_1(machines: &[Machine]) -> i64 {
     machines.iter().filter_map(|m| m.tokens_to_win()).sum()
 }
 
-fn part_2(machines: &[Machine]) -> u64 {
+fn part_2(machines: &[Machine]) -> i64 {
     machines
         .iter()
         .cloned()
