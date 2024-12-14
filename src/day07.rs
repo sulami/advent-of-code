@@ -6,6 +6,7 @@ use nom::{
     sequence::separated_pair,
     IResult,
 };
+use rayon::prelude::*;
 
 super::solve!("07");
 
@@ -15,7 +16,7 @@ fn parse(input: &str) -> Vec<Formula> {
 
 fn part_1(formulas: &[Formula]) -> u64 {
     formulas
-        .iter()
+        .par_iter()
         .filter(|f| f.is_possible(false))
         .map(|f| f.target)
         .sum()
@@ -23,7 +24,7 @@ fn part_1(formulas: &[Formula]) -> u64 {
 
 fn part_2(formulas: &[Formula]) -> u64 {
     formulas
-        .iter()
+        .par_iter()
         .filter(|f| f.is_possible(true))
         .map(|f| f.target)
         .sum()
