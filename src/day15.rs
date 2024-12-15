@@ -13,14 +13,18 @@ fn parse(input: &str) -> (Map, Coord, Vec<Direction>) {
 
     let (map, instructions) = input.split_once("\n\n").expect("no divider");
 
-    let mut walls = vec![];
-    let mut boxes = vec![];
+    let mut walls = FxHashSet::default();
+    let mut boxes = FxHashSet::default();
     let mut robot = (0, 0);
     for (y, line) in map.lines().enumerate() {
         for (x, c) in line.chars().enumerate() {
             match c {
-                '#' => walls.push((x as isize, y as isize)),
-                'O' => boxes.push((x as isize, y as isize)),
+                '#' => {
+                    walls.insert((x as isize, y as isize));
+                }
+                'O' => {
+                    boxes.insert((x as isize, y as isize));
+                }
                 '@' => robot = (x as isize, y as isize),
                 _ => {}
             }
@@ -41,12 +45,7 @@ fn part_1((map, robot, instructions): &(Map, Coord, Vec<Direction>)) -> isize {
     let mut robot = robot.to_owned();
 
     'ins: for instruction in instructions {
-        let diff = match instruction {
-            Direction::Right => (1, 0),
-            Direction::Left => (-1, 0),
-            Direction::Up => (0, -1),
-            Direction::Down => (0, 1),
-        };
+        let diff = instruction.diff();
         let mut boxes_to_move = vec![];
         let mut current = robot;
         'bxs: loop {
@@ -64,10 +63,12 @@ fn part_1((map, robot, instructions): &(Map, Coord, Vec<Direction>)) -> isize {
                 break 'bxs;
             }
         }
+        // Two-pass to avoid removing boxes we just added.
+        for b in boxes_to_move.iter() {
+            map.boxes.remove(b);
+        }
         for b in boxes_to_move {
-            map.boxes
-                .remove(map.boxes.iter().position(|x| *x == b).unwrap());
-            map.boxes.push(add_coords(b, diff));
+            map.boxes.insert(add_coords(b, diff));
         }
         robot = add_coords(robot, diff);
     }
@@ -81,38 +82,30 @@ fn part_2((map, robot, instructions): &(Map, Coord, Vec<Direction>)) -> isize {
 
     // Shift everything over.
     robot.0 *= 2;
-    for b in map.boxes.iter_mut() {
-        // Boxes still identified by their left coordinate.
-        b.0 *= 2;
-    }
-    for w in map.walls.iter_mut() {
-        w.0 *= 2;
-    }
+    // Boxes still identified by their left coordinate.
+    map.boxes = map.boxes.iter().map(|(x, y)| (x * 2, *y)).collect();
     // Walls are just duplicated for simplicity.
-    let extra_walls = map
+    map.walls = map
         .walls
         .iter()
-        .map(|(x, y)| (x + 1, *y))
-        .collect::<Vec<_>>();
-    map.walls.extend_from_slice(&extra_walls);
+        .flat_map(|(x, y)| [(x * 2, *y), (x * 2 + 1, *y)])
+        .collect();
 
     // Same as part 1, but with extra box shifting.
     'ins: for instruction in instructions {
-        let diff = match instruction {
-            Direction::Right => (1, 0),
-            Direction::Left => (-1, 0),
-            Direction::Up => (0, -1),
-            Direction::Down => (0, 1),
-        };
+        let diff = instruction.diff();
         let mut boxes_to_move = FxHashSet::default();
         let mut pushed_on = FxHashSet::from_iter([add_coords(robot, diff)]);
         'bxs: loop {
+            if pushed_on.is_empty() {
+                // Everything is free, we can push this way.
+                break 'bxs;
+            }
             // Are we pushing onto a wall anywhere?
-            if pushed_on.iter().any(|p| map.walls.contains(p)) {
+            if !pushed_on.is_disjoint(&map.walls) {
                 // Hit a wall, abort this instruction.
                 continue 'ins;
             }
-
             let mut new_pushed_on = FxHashSet::default();
             for &centre in pushed_on.iter() {
                 let left_of_centre = add_coords(centre, (-1, 0));
@@ -121,14 +114,14 @@ fn part_2((map, robot, instructions): &(Map, Coord, Vec<Direction>)) -> isize {
                 // Do we hit a box, and if so where?
                 // Depends on the direction we push on as well.
                 match instruction {
-                    Direction::Down | Direction::Up => {
+                    Direction::Up | Direction::Down => {
                         if map.boxes.contains(&centre) {
-                            // Left side.
+                            // Hit the left side of the box.
                             boxes_to_move.insert(centre);
                             new_pushed_on.insert(add_coords(centre, diff));
                             new_pushed_on.insert(add_coords(right_of_centre, diff));
                         } else if map.boxes.contains(&left_of_centre) {
-                            // Hit right side.
+                            // Hit the right side of the box.
                             boxes_to_move.insert(left_of_centre);
                             new_pushed_on.insert(add_coords(left_of_centre, diff));
                             new_pushed_on.insert(add_coords(centre, diff));
@@ -149,15 +142,13 @@ fn part_2((map, robot, instructions): &(Map, Coord, Vec<Direction>)) -> isize {
                 };
             }
             pushed_on = new_pushed_on;
-            if pushed_on.is_empty() {
-                // Everything is free, we can push this way.
-                break 'bxs;
-            }
+        }
+        // Two-pass to avoid removing boxes we just added.
+        for b in boxes_to_move.iter() {
+            map.boxes.remove(b);
         }
         for b in boxes_to_move {
-            map.boxes
-                .remove(map.boxes.iter().position(|x| *x == b).unwrap());
-            map.boxes.push(add_coords(b, diff));
+            map.boxes.insert(add_coords(b, diff));
         }
         robot = add_coords(robot, diff);
     }
@@ -173,8 +164,8 @@ fn add_coords(a: Coord, b: Coord) -> Coord {
 
 #[derive(Clone)]
 struct Map {
-    walls: Vec<Coord>,
-    boxes: Vec<Coord>,
+    walls: FxHashSet<Coord>,
+    boxes: FxHashSet<Coord>,
 }
 
 enum Direction {
@@ -182,6 +173,17 @@ enum Direction {
     Down,
     Left,
     Right,
+}
+
+impl Direction {
+    fn diff(&self) -> Coord {
+        match self {
+            Self::Right => (1, 0),
+            Self::Left => (-1, 0),
+            Self::Up => (0, -1),
+            Self::Down => (0, 1),
+        }
+    }
 }
 
 #[cfg(test)]
