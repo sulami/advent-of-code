@@ -14,6 +14,7 @@ mod day13;
 mod day14;
 mod day15;
 mod day16;
+mod day17;
 
 fn main() {
     day01::solve();
@@ -32,6 +33,7 @@ fn main() {
     day14::solve();
     day15::solve();
     day16::solve();
+    day17::solve();
 }
 
 #[macro_export]
@@ -42,9 +44,9 @@ macro_rules! solve {
             let input = parse(include_str!(concat!("inputs/", $day)));
             let a = part_1(&input);
             let b = part_2(&input);
-            println!("Day {}:  ({:>3} ms)", $day, start.elapsed().as_millis());
-            println!("  {:>15}", a);
-            println!("  {:>15}", b);
+            println!("Day {}:     ({:>3} ms)", $day, start.elapsed().as_millis());
+            println!("  {:>18}", a);
+            println!("  {:>18}", b);
         }
     };
 }
