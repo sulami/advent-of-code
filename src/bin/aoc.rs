@@ -14,7 +14,8 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    let solvers = HashMap::from([
+    let solvers: HashMap<u32, Vec<fn()>> = HashMap::from([
+        (2015, vec![advent_of_code::y2015::day_01::solve as fn()]),
         (
             2022,
             vec![
