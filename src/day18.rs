@@ -31,24 +31,17 @@ fn part_1(input: &[Coordinate]) -> usize {
 fn part_2(input: &[Coordinate]) -> String {
     let test_mode = input.len() < 1024;
     let size = if test_mode { 7 } else { 71 };
-    let mut corruption = [[false; 71]; 71];
-    input
-        .iter()
-        .take(if test_mode { 12 } else { 1024 })
-        .for_each(|&Coordinate { x, y }| corruption[x][y] = true);
-    for (time, corrupted) in input
-        .iter()
-        .enumerate()
-        .skip(if test_mode { 12 } else { 1024 })
-    {
-        corruption[corrupted.x][corrupted.y] = true;
-        if steps_required(&corruption, size).is_none() {
-            let fatal_byte = input[time];
-            return format!("{},{}", fatal_byte.x, fatal_byte.y);
-        }
-    }
-
-    panic!("ran out of corrupted bytes")
+    let indices: Vec<usize> = (0..=input.len()).collect();
+    let time = indices.partition_point(|n| {
+        let mut corruption = [[false; 71]; 71];
+        input
+            .iter()
+            .take(*n)
+            .for_each(|&Coordinate { x, y }| corruption[x][y] = true);
+        steps_required(&corruption, size).is_some()
+    });
+    let fatal_byte = input[time - 1];
+    format!("{},{}", fatal_byte.x, fatal_byte.y)
 }
 
 fn steps_required(corruption: &[[bool; 71]; 71], size: usize) -> Option<usize> {
