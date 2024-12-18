@@ -22,7 +22,7 @@ fn part_1(reports: &[Vec<i32>]) -> usize {
 fn part_2(reports: &[Vec<i32>]) -> usize {
     let mut count = 0;
     for report in reports {
-        if safe_report(&report) {
+        if safe_report(report) {
             count += 1;
         } else {
             for i in 0..report.len() {

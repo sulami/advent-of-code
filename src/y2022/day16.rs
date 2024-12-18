@@ -1,6 +1,5 @@
 use std::collections::VecDeque;
 
-use fxhash::{FxHashMap, FxHashSet};
 use itertools::Itertools;
 use nom::{
     branch::alt,
@@ -11,11 +10,12 @@ use nom::{
     IResult,
 };
 use rayon::prelude::*;
+use rustc_hash::{FxHashMap, FxHashSet};
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/16.txt");
+pub fn solve() {
+    let input = include_str!("inputs/16.txt");
     let (valves, distances) = setup(input);
-    format!(
+    println!(
         "{}\n{}",
         part1(&valves, &distances),
         part2(&valves, &distances)
@@ -59,8 +59,8 @@ fn setup(input: &str) -> (FxHashMap<String, Valve>, FxHashMap<(String, String), 
     // just used to modify edge weights.
     let mut useful_valves: Vec<Valve> = valves
         .values()
+        .filter(|&v| v.flow_rate > 0)
         .cloned()
-        .filter(|v| v.flow_rate > 0)
         .collect();
     useful_valves.push(valves.get("AA").unwrap().clone());
     let distances: FxHashMap<_, _> = useful_valves
@@ -296,7 +296,7 @@ struct Agent<'a> {
     busy_until: Time,
 }
 
-impl<'a> Default for Agent<'a> {
+impl Default for Agent<'_> {
     fn default() -> Self {
         Self {
             position: "AA",

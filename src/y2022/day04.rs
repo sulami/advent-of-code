@@ -1,12 +1,12 @@
 use std::str::FromStr;
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/04.txt");
+pub fn solve() {
+    let input = include_str!("inputs/04.txt");
     let pairs: Vec<Pair> = input
         .lines()
         .map(|l| l.parse().expect("failed to parse pair"))
         .collect();
-    format!(
+    println!(
         "{}\n{}",
         pairs.iter().filter(|p| fully_contains(p)).count(),
         pairs.iter().filter(|p| overlaps(p)).count()

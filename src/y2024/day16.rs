@@ -152,7 +152,7 @@ fn search(
         .min()
         .flatten()
         .expect("no solution found");
-    let fields = min_path_fields(&walls, &costs, start, finish);
+    let fields = min_path_fields(walls, &costs, start, finish);
 
     (min_cost, fields.len())
 }

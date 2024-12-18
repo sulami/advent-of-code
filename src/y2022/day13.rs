@@ -5,9 +5,9 @@ use nom::{
     multi::separated_list0, sequence::delimited, IResult,
 };
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/13.txt");
-    format!("{}\n{}", part1(input), part2(input))
+pub fn solve() {
+    let input = include_str!("inputs/13.txt");
+    println!("{}\n{}", part1(input), part2(input))
 }
 
 fn part1(input: &str) -> usize {

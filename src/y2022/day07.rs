@@ -1,8 +1,8 @@
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/07.txt");
+pub fn solve() {
+    let input = include_str!("inputs/07.txt");
     let entries: Vec<Entry> = input
         .split("$ ")
         .skip(1)
@@ -31,7 +31,7 @@ pub fn solve() -> String {
         .find(|d| d.get_size() >= required_space)
         .expect("no directory is large enough")
         .get_size();
-    format!("{part1}\n{part2}")
+    println!("{part1}\n{part2}")
 }
 
 #[derive(Debug)]

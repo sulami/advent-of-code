@@ -1,8 +1,8 @@
 use std::str::FromStr;
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/08.txt");
-    format!("{}\n{}", part1(input), part2(input))
+pub fn solve() {
+    let input = include_str!("inputs/08.txt");
+    println!("{}\n{}", part1(input), part2(input))
 }
 
 fn part1(input: &str) -> usize {

@@ -3,11 +3,11 @@
 use std::collections::VecDeque;
 use std::str::FromStr;
 
-use fxhash::FxHashSet;
+use rustc_hash::FxHashSet;
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/12.txt");
-    format!("{}\n{}", part1(input), part2(input))
+pub fn solve() {
+    let input = include_str!("inputs/12.txt");
+    println!("{}\n{}", part1(input), part2(input))
 }
 
 fn part1(input: &str) -> usize {

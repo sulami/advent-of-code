@@ -1,8 +1,8 @@
 use itertools::iterate;
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/25.txt");
-    format!("{}", part1(input))
+pub fn solve() {
+    let input = include_str!("inputs/25.txt");
+    println!("{}", part1(input))
 }
 
 fn part1(input: &str) -> String {

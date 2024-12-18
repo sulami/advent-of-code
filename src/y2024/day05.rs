@@ -34,7 +34,7 @@ fn parse_manual(s: &str) -> IResult<&str, Vec<u8>> {
 fn part_1((rules, manuals): &(Vec<Rule>, Vec<Vec<u8>>)) -> usize {
     manuals
         .iter()
-        .filter(|m| is_valid(m, &rules))
+        .filter(|m| is_valid(m, rules))
         .map(|m| m[m.len() / 2] as usize)
         .sum()
 }
@@ -42,7 +42,7 @@ fn part_1((rules, manuals): &(Vec<Rule>, Vec<Vec<u8>>)) -> usize {
 fn part_2((rules, manuals): &(Vec<Rule>, Vec<Vec<u8>>)) -> usize {
     manuals
         .iter()
-        .filter(|m| !is_valid(m, &rules))
+        .filter(|m| !is_valid(m, rules))
         .cloned()
         .map(|mut m| {
             m.sort_by(|a, b| {

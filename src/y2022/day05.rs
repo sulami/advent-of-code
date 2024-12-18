@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/05.txt");
+pub fn solve() {
+    let input = include_str!("inputs/05.txt");
     let stack_tops = |stacks: &Stacks| -> String {
         stacks
             .crates
@@ -28,7 +28,7 @@ pub fn solve() -> String {
         .map(|m| m.parse::<Move>().expect("failed to parse move"))
         .try_for_each(|m| execute_move_9001(&mut stacks, &m))
         .expect("failed to execute moves");
-    format!("{part1}\n{}", stack_tops(&stacks))
+    println!("{part1}\n{}", stack_tops(&stacks))
 }
 
 fn execute_move_9000(stacks: &mut Stacks, m: &Move) -> Result<(), &'static str> {

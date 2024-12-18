@@ -1,12 +1,12 @@
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
-use fxhash::FxHashSet;
+use rustc_hash::FxHashSet;
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/24.txt");
+pub fn solve() {
+    let input = include_str!("inputs/24.txt");
     let (part1, part2) = both_parts(input);
-    format!("{part1}\n{part2}")
+    println!("{part1}\n{part2}")
 }
 
 fn both_parts(input: &str) -> (usize, usize) {

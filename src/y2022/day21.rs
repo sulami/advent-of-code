@@ -1,4 +1,3 @@
-use fxhash::FxHashMap;
 use nom::{
     branch::alt,
     bytes::complete::tag,
@@ -7,10 +6,11 @@ use nom::{
     sequence::tuple,
     IResult,
 };
+use rustc_hash::FxHashMap;
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/21.txt");
-    format!("{}\n{}", part1(input), part2(input))
+pub fn solve() {
+    let input = include_str!("inputs/21.txt");
+    println!("{}\n{}", part1(input), part2(input))
 }
 
 fn part1(input: &str) -> u64 {

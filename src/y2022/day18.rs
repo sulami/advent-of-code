@@ -1,6 +1,5 @@
 use std::collections::VecDeque;
 
-use fxhash::FxHashSet;
 use nom::{
     bytes::complete::tag,
     character::complete::i32,
@@ -8,10 +7,11 @@ use nom::{
     multi::separated_list1,
     IResult,
 };
+use rustc_hash::FxHashSet;
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/18.txt");
-    format!("{}\n{}", part1(input), part2(input))
+pub fn solve() {
+    let input = include_str!("inputs/18.txt");
+    println!("{}\n{}", part1(input), part2(input))
 }
 
 fn part1(input: &str) -> usize {

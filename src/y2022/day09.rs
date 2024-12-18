@@ -1,9 +1,9 @@
-use fxhash::FxHashSet;
+use rustc_hash::FxHashSet;
 use std::str::FromStr;
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/09.txt");
-    format!("{}\n{}", part1(input), part2(input))
+pub fn solve() {
+    let input = include_str!("inputs/09.txt");
+    println!("{}\n{}", part1(input), part2(input))
 }
 
 fn part1(input: &str) -> usize {
@@ -67,7 +67,7 @@ impl Rope {
         match m {
             Move::Up(n) => {
                 for _ in 0..*n {
-                    let mut head = self.knots.get_mut(0).unwrap();
+                    let head = self.knots.get_mut(0).unwrap();
                     head.1 += 1;
                     for idx in 0..self.knots.len() - 1 {
                         let head = *self.knots.get(idx).unwrap();
@@ -79,7 +79,7 @@ impl Rope {
             }
             Move::Down(n) => {
                 for _ in 0..*n {
-                    let mut head = self.knots.get_mut(0).unwrap();
+                    let head = self.knots.get_mut(0).unwrap();
                     head.1 -= 1;
                     for idx in 0..self.knots.len() - 1 {
                         let head = *self.knots.get(idx).unwrap();
@@ -91,7 +91,7 @@ impl Rope {
             }
             Move::Left(n) => {
                 for _ in 0..*n {
-                    let mut head = self.knots.get_mut(0).unwrap();
+                    let head = self.knots.get_mut(0).unwrap();
                     head.0 -= 1;
                     for idx in 0..self.knots.len() - 1 {
                         let head = *self.knots.get(idx).unwrap();
@@ -103,7 +103,7 @@ impl Rope {
             }
             Move::Right(n) => {
                 for _ in 0..*n {
-                    let mut head = self.knots.get_mut(0).unwrap();
+                    let head = self.knots.get_mut(0).unwrap();
                     head.0 += 1;
                     for idx in 0..self.knots.len() - 1 {
                         let head = *self.knots.get(idx).unwrap();

@@ -1,9 +1,9 @@
-use fxhash::{FxHashMap, FxHashSet};
 use itertools::Itertools;
+use rustc_hash::{FxHashMap, FxHashSet};
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/23.txt");
-    format!("{}\n{}", part1(input), part2(input))
+pub fn solve() {
+    let input = include_str!("inputs/23.txt");
+    println!("{}\n{}", part1(input), part2(input))
 }
 
 fn part1(input: &str) -> usize {

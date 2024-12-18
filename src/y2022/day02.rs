@@ -1,6 +1,6 @@
-pub fn solve() -> String {
-    let input = include_str!("../inputs/02.txt");
-    format!("{}\n{}", part1(input), part2(input))
+pub fn solve() {
+    let input = include_str!("inputs/02.txt");
+    println!("{}\n{}", part1(input), part2(input))
 }
 
 #[allow(clippy::identity_op)]

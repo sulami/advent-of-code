@@ -1,7 +1,7 @@
-use fxhash::{FxHashMap, FxHashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/03.txt");
+pub fn solve() {
+    let input = include_str!("inputs/03.txt");
     let rucksacks: Vec<&str> = input.lines().collect();
     let duplicates: Vec<char> = rucksacks
         .iter()
@@ -39,7 +39,7 @@ pub fn solve() -> String {
         })
         .collect();
 
-    format!(
+    println!(
         "{}\n{}",
         duplicates.iter().map(get_priority).sum::<u32>(),
         badges.iter().map(get_priority).sum::<u32>()

@@ -1,8 +1,8 @@
 use nom::{bytes::complete::tag, character::complete::u8, combinator::all_consuming, IResult};
 
-pub fn solve() -> String {
-    let input = include_str!("../inputs/19.txt");
-    format!("{}\n{}", part1(input), part2(input))
+pub fn solve() {
+    let input = include_str!("inputs/19.txt");
+    println!("{}\n{}", part1(input), part2(input))
 }
 
 fn part1(input: &str) -> u32 {
