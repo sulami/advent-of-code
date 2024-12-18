@@ -1,9 +1,5 @@
-#![cfg_attr(not(feature = "day-06"), allow(dead_code))]
-
-use arrayvec::ArrayString;
-
-pub fn solve() -> (u64, u64) {
-    let input = include_str!("../inputs/day_06");
+pub fn solve() {
+    let input = include_str!("inputs/day_06");
 
     let times = input
         .lines()
@@ -22,7 +18,7 @@ pub fn solve() -> (u64, u64) {
 
     let races = times.zip(distances);
 
-    let part_1 = races
+    let part_1: u64 = races
         .map(|(time, distance)| {
             (0..=time)
                 .filter(|push_duration| wins_race(time, *push_duration, distance))
@@ -30,7 +26,7 @@ pub fn solve() -> (u64, u64) {
         })
         .product();
 
-    let mut buffer_str: ArrayString<64> = ArrayString::new();
+    let mut buffer_str: String = String::new();
     input
         .lines()
         .next()
@@ -60,7 +56,7 @@ pub fn solve() -> (u64, u64) {
         .unwrap();
 
     let part_2 = losing_too_long - losing_too_short + 1;
-    (part_1, part_2)
+    println!("{}\n{}", part_1, part_2)
 }
 
 #[inline]

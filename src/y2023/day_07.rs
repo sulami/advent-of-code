@@ -1,13 +1,9 @@
-#![cfg_attr(not(feature = "day-07"), allow(dead_code))]
-
 use core::cmp::Ordering;
 
-use arrayvec::ArrayVec;
+pub fn solve() {
+    let input = include_str!("inputs/day_07");
 
-pub fn solve() -> (u64, u64) {
-    let input = include_str!("../inputs/day_07");
-
-    let mut cards: ArrayVec<(&str, u32), 1000> = ArrayVec::new();
+    let mut cards: Vec<(&str, u32)> = Vec::new();
     input
         .lines()
         .map(|line| line.split_once(' ').unwrap())
@@ -27,7 +23,7 @@ pub fn solve() -> (u64, u64) {
         .map(|(i, (_hand, bid))| (i as u32 + 1) * bid)
         .sum();
 
-    (part_1 as u64, part_2 as u64)
+    println!("{}\n{}", part_1 as u64, part_2 as u64)
 }
 
 fn cmp_hands(left: &str, right: &str, jokers: bool) -> Ordering {
@@ -65,7 +61,7 @@ enum HandType {
 }
 
 fn hand_type(hand: &str, jokers: bool) -> HandType {
-    let cards: ArrayVec<char, 5> = ArrayVec::from_iter(hand.chars());
+    let cards: Vec<char> = Vec::from_iter(hand.chars());
     let (count, most) = of_same_kind(&cards, jokers, None);
     if count == 5 {
         return HandType::FiveOfAKind;
@@ -93,11 +89,7 @@ fn hand_type(hand: &str, jokers: bool) -> HandType {
 /// Most occuring char in Vec, and its count. Optionally deny-list a
 /// char. Horribly specific function. I'm just having a bad day and
 /// want to get this puzzle done.
-fn of_same_kind<const N: usize>(
-    coll: &ArrayVec<char, N>,
-    jokers: bool,
-    avoid: Option<char>,
-) -> (usize, char) {
+fn of_same_kind(coll: &Vec<char>, jokers: bool, avoid: Option<char>) -> (usize, char) {
     // This is just evil.
     if coll.iter().all(|c| *c == 'J') {
         return (5, 'J');

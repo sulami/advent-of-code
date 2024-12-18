@@ -1,15 +1,11 @@
-#![cfg_attr(not(feature = "day-05"), allow(dead_code))]
-
 //! This is really slow for part 2, but smarter range analysis would
 //! be tricky with our memory constraints. It does work though, the
 //! solution was computed on real hardware.
 
 use core::ops::Range;
 
-use arrayvec::ArrayVec;
-
-pub fn solve() -> (u64, u64) {
-    let input = include_str!("../inputs/day_05");
+pub fn solve() {
+    let input = include_str!("inputs/day_05");
 
     let part_1 = input.lines().next().unwrap()[7..]
         .split_whitespace()
@@ -17,7 +13,7 @@ pub fn solve() -> (u64, u64) {
         .min()
         .unwrap_or(u64::MAX);
 
-    let mut seed_ranges: ArrayVec<Range<u64>, 10> = ArrayVec::new();
+    let mut seed_ranges: Vec<Range<u64>> = Vec::new();
     let mut seed_nums = input.lines().next().unwrap()[7..].split_whitespace();
     while let Some(start) = seed_nums.next() {
         let start: u64 = start.parse().unwrap();
@@ -34,7 +30,7 @@ pub fn solve() -> (u64, u64) {
         .map(|(location, _)| location)
         .unwrap();
 
-    (part_1, part_2)
+    println!("{}\n{}", part_1, part_2)
 }
 
 fn seed_to_location(input: &str, seed: u64) -> u64 {

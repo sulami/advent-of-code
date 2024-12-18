@@ -1,6 +1,3 @@
-#![cfg_attr(not(feature = "day-01"), allow(dead_code))]
-
-use arrayvec::ArrayString;
 use nom::{
     branch::alt,
     bytes::complete::tag,
@@ -9,8 +6,8 @@ use nom::{
     IResult,
 };
 
-pub fn solve() -> (u64, u64) {
-    let input = include_str!("../inputs/day_01");
+pub fn solve() {
+    let input = include_str!("inputs/day_01");
 
     let mut sum: u32 = 0;
     let mut sum2: u32 = 0;
@@ -27,7 +24,7 @@ pub fn solve() -> (u64, u64) {
         sum2 += msd * 10 + lsd;
     });
 
-    (sum as u64, sum2 as u64)
+    println!("{}\n{}", sum as u64, sum2 as u64)
 }
 
 fn find_number(s: &str, reverse: bool) -> u32 {
@@ -37,12 +34,12 @@ fn find_number(s: &str, reverse: bool) -> u32 {
     } else {
         number_matcher
     };
-    let haystack: ArrayString<64> = if reverse {
-        let mut array_s = ArrayString::<64>::new();
+    let haystack: String = if reverse {
+        let mut array_s = String::new();
         s.chars().rev().for_each(|c| array_s.push(c));
         array_s
     } else {
-        ArrayString::from(s).unwrap()
+        String::from(s)
     };
 
     loop {

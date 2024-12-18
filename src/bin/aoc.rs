@@ -46,6 +46,21 @@ fn main() {
             ],
         ),
         (
+            2023,
+            vec![
+                advent_of_code::y2023::day_01::solve,
+                advent_of_code::y2023::day_02::solve,
+                advent_of_code::y2023::day_03::solve,
+                advent_of_code::y2023::day_04::solve,
+                advent_of_code::y2023::day_05::solve,
+                advent_of_code::y2023::day_06::solve,
+                advent_of_code::y2023::day_07::solve,
+                advent_of_code::y2023::day_08::solve,
+                advent_of_code::y2023::day_09::solve,
+                advent_of_code::y2023::day_10::solve,
+            ],
+        ),
+        (
             2024,
             vec![
                 advent_of_code::y2024::day01::solve,

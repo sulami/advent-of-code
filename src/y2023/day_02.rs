@@ -1,5 +1,3 @@
-#![cfg_attr(not(feature = "day-02"), allow(dead_code))]
-
 use nom::{
     branch::alt,
     bytes::complete::tag,
@@ -8,8 +6,8 @@ use nom::{
     IResult,
 };
 
-pub fn solve() -> (u64, u64) {
-    let input = include_str!("../inputs/day_02");
+pub fn solve() {
+    let input = include_str!("inputs/day_02");
 
     let mut sum: u32 = 0;
     let mut sum2: u32 = 0;
@@ -22,7 +20,7 @@ pub fn solve() -> (u64, u64) {
         sum2 += record.max_red * record.max_green * record.max_blue;
     });
 
-    (sum as u64, sum2 as u64)
+    println!("{}\n{}", sum as u64, sum2 as u64)
 }
 
 #[derive(Default)]

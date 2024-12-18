@@ -1,7 +1,5 @@
-#![cfg_attr(not(feature = "day-10"), allow(dead_code))]
-
-pub fn solve() -> (u64, u64) {
-    let input = include_str!("../inputs/day_10");
+pub fn solve() {
+    let input = include_str!("inputs/day_10");
     let map = Map {
         s: input.as_bytes(),
         width: input.lines().next().unwrap().len() + 1,
@@ -24,7 +22,7 @@ pub fn solve() -> (u64, u64) {
         direction = turn(direction, map.get_field(position));
     }
 
-    (steps / 2, 0)
+    println!("{}\n{}", steps / 2, 0)
 }
 
 type Coordinates = (usize, usize);

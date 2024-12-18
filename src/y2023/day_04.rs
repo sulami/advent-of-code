@@ -1,20 +1,15 @@
-#![cfg_attr(not(feature = "day-04"), allow(dead_code))]
-
-use arrayvec::ArrayVec;
 use nom::{
     bytes::complete::tag,
     character::complete::{space0, u32},
 };
 
-const MAX_WINNING_NUMBERS: usize = 10;
-
-pub fn solve() -> (u64, u64) {
-    let input = include_str!("../inputs/day_04");
+pub fn solve() {
+    let input = include_str!("inputs/day_04");
 
     let part_1: u32 = input.lines().map(winnings).map(|n| 2_u32.pow(n - 1)).sum();
 
     let mut part_2 = 0;
-    let mut extra_cards: ArrayVec<u32, MAX_WINNING_NUMBERS> = ArrayVec::new();
+    let mut extra_cards: Vec<u32> = Vec::new();
 
     for card in input.lines() {
         let wins = winnings(card);
@@ -33,13 +28,13 @@ pub fn solve() -> (u64, u64) {
         }
     }
 
-    (part_1 as u64, part_2 as u64)
+    println!("{}\n{}", part_1 as u64, part_2 as u64)
 }
 
 fn winnings(mut card: &str) -> u32 {
     card = &card[card.find(':').unwrap() + 2..];
 
-    let mut winning_numbers: ArrayVec<u32, MAX_WINNING_NUMBERS> = ArrayVec::new();
+    let mut winning_numbers: Vec<u32> = Vec::new();
     let mut past_bar = false;
     let mut score = 0;
 

@@ -1,7 +1,5 @@
-#![cfg_attr(not(feature = "day-08"), allow(dead_code))]
-
-pub fn solve() -> (u64, u64) {
-    let input = include_str!("../inputs/day_08");
+pub fn solve() {
+    let input = include_str!("inputs/day_08");
 
     let part_1 = navigate(input, "AAA", |pos| pos == "ZZZ");
     let part_2 = input
@@ -11,7 +9,7 @@ pub fn solve() -> (u64, u64) {
         .map(|line| navigate(input, &line[..3], |pos| &pos[2..] == "Z"))
         .fold(1, lcm);
 
-    (part_1, part_2)
+    println!("{}\n{}", part_1, part_2)
 }
 
 fn navigate(input: &str, start: &str, pred: impl Fn(&str) -> bool) -> u64 {

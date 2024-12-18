@@ -1,13 +1,11 @@
-#![cfg_attr(not(feature = "day-03"), allow(dead_code))]
-
 use nom::{
     character::complete::{none_of, u32},
     combinator::consumed,
     multi::many0_count,
 };
 
-pub fn solve() -> (u64, u64) {
-    let input = include_str!("../inputs/day_03");
+pub fn solve() {
+    let input = include_str!("inputs/day_03");
 
     // Part 1
     let mut sum = 0;
@@ -51,7 +49,7 @@ pub fn solve() -> (u64, u64) {
         }
     }
 
-    (sum as u64, sum2 as u64)
+    println!("{}\n{}", sum as u64, sum2 as u64)
 }
 
 fn is_part_number(input: &str, x: usize, y: usize, width: usize) -> bool {

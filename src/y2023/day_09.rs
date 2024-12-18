@@ -1,12 +1,5 @@
-#![cfg_attr(not(feature = "day-09"), allow(dead_code))]
-
-use arrayvec::ArrayVec;
-
-const MAX_LENGTH: usize = 25;
-const MAX_DEPTH: usize = 25;
-
-pub fn solve() -> (u64, u64) {
-    let input = include_str!("../inputs/day_09");
+pub fn solve() {
+    let input = include_str!("inputs/day_09");
 
     let part_1: i64 = input
         .lines()
@@ -17,18 +10,18 @@ pub fn solve() -> (u64, u64) {
         .map(|line| extrapolate(line, Direction::Front))
         .sum();
 
-    (part_1 as u64, part_2 as u64)
+    println!("{}\n{}", part_1 as u64, part_2 as u64)
 }
 
 fn extrapolate(line: &str, direction: Direction) -> i64 {
-    let mut derivations: ArrayVec<ArrayVec<i64, MAX_LENGTH>, MAX_DEPTH> = ArrayVec::new();
-    derivations.push(ArrayVec::new());
+    let mut derivations: Vec<Vec<i64>> = Vec::new();
+    derivations.push(Vec::new());
 
     line.split_whitespace()
         .map(|s| s.parse::<i64>().unwrap())
         .for_each(|n| derivations[0].push(n));
 
-    let mut this_level = ArrayVec::new();
+    let mut this_level = Vec::new();
     while derivations.last().unwrap().iter().any(|n| *n != 0) {
         derivations
             .last()
