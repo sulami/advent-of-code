@@ -6,7 +6,7 @@ use nom::{
     IResult,
 };
 
-super::solve!("14");
+crate::solve!("14");
 
 fn parse(input: &str) -> Vec<Robot> {
     let parse_robot = |s| -> IResult<&str, Robot> {

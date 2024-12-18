@@ -1,6 +1,6 @@
 use rustc_hash::FxHashSet;
 
-super::solve!("15");
+crate::solve!("15");
 
 fn parse(input: &str) -> (Map, Coord, Vec<Direction>) {
     let parse_instruction = |c| match c {

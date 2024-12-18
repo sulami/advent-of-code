@@ -2,7 +2,7 @@ use nom::{
     bytes::complete::tag, character::complete::i64 as parse_u32, multi::separated_list0, IResult,
 };
 
-super::solve!("13");
+crate::solve!("13");
 
 fn parse(input: &str) -> Vec<Machine> {
     let parse_machine = |s| -> IResult<&str, Machine> {

@@ -4,7 +4,7 @@ use nom::{
 };
 use rustc_hash::FxHashMap;
 
-super::solve!("11");
+crate::solve!("11");
 
 fn parse(input: &str) -> Vec<u64> {
     separated_list1(space1::<&str, ()>, parse_u64)(input)

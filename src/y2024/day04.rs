@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-super::solve!("04");
+crate::solve!("04");
 
 fn parse(input: &str) -> Search {
     Search::new(input)

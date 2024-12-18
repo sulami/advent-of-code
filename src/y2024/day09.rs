@@ -1,6 +1,6 @@
 use itertools::{repeat_n, Itertools};
 
-super::solve!("09");
+crate::solve!("09");
 
 fn parse(input: &str) -> Vec<Option<usize>> {
     expand_disk(input)

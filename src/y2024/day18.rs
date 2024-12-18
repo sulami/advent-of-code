@@ -3,7 +3,7 @@ use nom::sequence::separated_pair;
 use std::cmp::{Ordering, Reverse};
 use std::collections::BinaryHeap;
 
-super::solve!("18");
+crate::solve!("18");
 
 fn parse(input: &str) -> Vec<Coordinate> {
     input

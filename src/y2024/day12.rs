@@ -1,6 +1,6 @@
 use rustc_hash::FxHashSet;
 
-super::solve!("12");
+crate::solve!("12");
 
 type Plant = char;
 type Plot = (usize, usize);

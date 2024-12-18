@@ -5,7 +5,7 @@ use nom::{
     multi::separated_list1,
 };
 
-super::solve!("02");
+crate::solve!("02");
 
 fn parse(input: &str) -> Vec<Vec<i32>> {
     let mut parse_report = all_consuming(separated_list1(multispace1::<&str, ()>, parse_i32));

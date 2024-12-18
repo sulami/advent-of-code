@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-super::solve!("08");
+crate::solve!("08");
 
 fn parse(input: &str) -> &str {
     input

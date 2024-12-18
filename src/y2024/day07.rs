@@ -8,7 +8,7 @@ use nom::{
 };
 use rayon::prelude::*;
 
-super::solve!("07");
+crate::solve!("07");
 
 fn parse(input: &str) -> Vec<Formula> {
     parse_input(input).expect("invalid input").1

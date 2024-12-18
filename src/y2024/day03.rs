@@ -7,7 +7,7 @@ use nom::{
     sequence::{delimited, separated_pair},
 };
 
-super::solve!("03");
+crate::solve!("03");
 
 enum Instruction {
     Mul(u32, u32),

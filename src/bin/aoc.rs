@@ -1,0 +1,20 @@
+fn main() {
+    advent_of_code_2024::y2024::day01::solve();
+    advent_of_code_2024::y2024::day02::solve();
+    advent_of_code_2024::y2024::day03::solve();
+    advent_of_code_2024::y2024::day04::solve();
+    advent_of_code_2024::y2024::day05::solve();
+    advent_of_code_2024::y2024::day06::solve();
+    advent_of_code_2024::y2024::day07::solve();
+    advent_of_code_2024::y2024::day08::solve();
+    advent_of_code_2024::y2024::day09::solve();
+    advent_of_code_2024::y2024::day10::solve();
+    advent_of_code_2024::y2024::day11::solve();
+    advent_of_code_2024::y2024::day12::solve();
+    advent_of_code_2024::y2024::day13::solve();
+    advent_of_code_2024::y2024::day14::solve();
+    advent_of_code_2024::y2024::day15::solve();
+    advent_of_code_2024::y2024::day16::solve();
+    advent_of_code_2024::y2024::day17::solve();
+    advent_of_code_2024::y2024::day18::solve();
+}

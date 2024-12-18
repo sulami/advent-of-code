@@ -5,7 +5,7 @@ use nom::{
     sequence::separated_pair,
 };
 
-super::solve!("01");
+crate::solve!("01");
 
 fn parse(input: &str) -> (Vec<u32>, Vec<u32>) {
     let mut parse_pair = all_consuming(separated_pair(

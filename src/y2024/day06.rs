@@ -2,7 +2,7 @@ use itertools::Itertools;
 use rayon::prelude::*;
 use rustc_hash::FxHashSet;
 
-super::solve!("06");
+crate::solve!("06");
 
 fn parse(input: &str) -> &str {
     input

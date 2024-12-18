@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-super::solve!("10");
+crate::solve!("10");
 
 fn parse(input: &str) -> Map {
     let width = input.chars().take_while(char::is_ascii_digit).count();

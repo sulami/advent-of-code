@@ -5,7 +5,7 @@ use nom::multi::separated_list1;
 use nom::sequence::preceded;
 use nom::IResult;
 
-super::solve!("17");
+crate::solve!("17");
 
 fn parse(input: &str) -> Computer {
     parse_computer(input).expect("invalid computer").1

@@ -9,7 +9,7 @@ use nom::{
     IResult,
 };
 
-super::solve!("05");
+crate::solve!("05");
 
 type Rule = (u8, u8);
 

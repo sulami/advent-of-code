@@ -1,7 +1,7 @@
 use rustc_hash::FxHashSet;
 use std::{cmp::Ordering, collections::BinaryHeap, hash::Hash};
 
-super::solve!("16");
+crate::solve!("16");
 
 fn parse(input: &str) -> (FxHashSet<Coords>, Coords, Coords) {
     let mut walls = FxHashSet::default();
