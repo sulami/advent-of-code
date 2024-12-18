@@ -1,6 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use rand::random;
-use std::iter::repeat_with;
 
 fn digits_string(n: u64) -> u32 {
     n.to_string().len() as u32
