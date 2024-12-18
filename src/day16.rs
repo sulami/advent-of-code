@@ -1,4 +1,4 @@
-use rustc_hash::{FxHashMap, FxHashSet};
+use rustc_hash::FxHashSet;
 use std::{cmp::Ordering, collections::BinaryHeap, hash::Hash};
 
 super::solve!("16");
@@ -97,16 +97,14 @@ fn search(
     direction: Direction,
     finish: Coords,
 ) -> (usize, usize) {
-    let mut parents: FxHashMap<Coords, Vec<Coords>> = FxHashMap::default();
     let mut costs = [[[None; 4]; 141]; 141];
-    costs[start.1 as usize][start.0 as usize][direction as usize] = Some(0);
-    let mut options = BinaryHeap::new();
-    options.push(Possibility {
+    costs[start.0 as usize][start.1 as usize][direction as usize] = Some(0);
+    let mut options = BinaryHeap::from([Possibility {
         position: start,
         direction,
         finish,
         score: 0,
-    });
+    }]);
 
     while let Some(Possibility {
         position,
@@ -115,113 +113,28 @@ fn search(
         ..
     }) = options.pop()
     {
-        // Add more possibilities based on the current one. Conflate turning and moving, because
-        // we never want to do a 180 anyway.
-        'step: for (new_position, new_direction, new_score) in [
+        // Add more possibilities based on the current one.
+        for (new_position, new_direction, new_score) in [
             (next_position(position, direction), direction, score + 1),
-            (
-                next_position(position, direction.turn_clockwise()),
-                direction.turn_clockwise(),
-                score + 1001,
-            ),
-            (
-                next_position(position, direction.turn_counterclockwise()),
-                direction.turn_counterclockwise(),
-                score + 1001,
-            ),
+            (position, direction.turn_clockwise(), score + 1000),
+            (position, direction.turn_counterclockwise(), score + 1000),
         ] {
             // Don't walk into walls.
             if walls.contains(&new_position) {
                 continue;
             }
 
-            let cost = &mut costs[new_position.1 as usize][new_position.0 as usize];
+            let cost = &mut costs[new_position.0 as usize][new_position.1 as usize];
 
-            // Special case for the finish, we don't care about direction, only the cheapest way to
-            // get to the position in any direction.
-            if new_position == finish {
-                match cost[0] {
-                    // We haven't been to the finish before.
-                    None => {
-                        cost[0] = Some(new_score);
-                        parents.insert(new_position, vec![position]);
-                    }
-                    // We got to the finish with a lower score than before.
-                    Some(s) if new_score < s => {
-                        cost[0] = Some(new_score);
-                        parents.insert(new_position, vec![position]);
-                    }
-                    // We got to the finish with the same score as before.
-                    Some(s) if new_score == s => {
-                        parents
-                            .entry(new_position)
-                            .and_modify(|v| {
-                                if !v.contains(&position) {
-                                    v.push(position)
-                                }
-                            })
-                            .or_insert(vec![position]);
-                    }
-                    // We got to the finish with a higher score than before.
-                    Some(s) if s < new_score => {}
-                    _ => unreachable!("s and score compare weirdly"),
-                }
-                // We're done here.
-                continue;
-            }
-
-            // Check turns on either side of the current direction.
-            for turn in [
-                (new_direction as usize + 1) % 4,
-                (new_direction as usize + 3) % 4,
-            ] {
-                // We got here before from a different direction, but at lower cost.
-                if cost[turn].is_some_and(|c| c + 1000 < new_score) {
-                    continue 'step;
-                }
-                // We got here before from a different direction, but at a higher cost.
-                if cost[turn].is_some_and(|c| c + 1000 > new_score) {
-                    parents.remove(&new_position);
-                }
-            }
-
-            // We got here from the opposite side cheaper.
-            if cost[(new_direction as usize + 2) % 4].is_some_and(|c| c + 2000 < new_score) {
-                continue;
-            }
-
-            // Check the same direction we arrived.
             match cost[new_direction as usize] {
                 // We got here with a lower score before, abort.
                 Some(c) if c < new_score => continue,
                 // We got here with a lower score than before, update the score.
-                Some(c) if new_score < c => {
-                    cost[new_direction as usize] = Some(new_score);
-                    // Fill in cost for the two turns as well.
-                    for turn in [
-                        (new_direction as usize + 1) % 4,
-                        (new_direction as usize + 3) % 4,
-                    ] {
-                        cost[turn] = Some(new_score + 1000);
-                    }
-                    // Previous ways to get here were suboptimal, reset parents.
-                    parents.remove(&new_position);
-                }
+                Some(c) if new_score < c => cost[new_direction as usize] = Some(new_score),
                 // We got here before with the same score, found an alternative route.
                 Some(_) => {}
-                // We haven't been here before, fill in the score and route.
-                None => {
-                    cost[new_direction as usize] = Some(new_score);
-                }
-            }
-
-            // Record which position we got here from.
-            match parents.get_mut(&new_position) {
-                Some(v) if !v.contains(&position) => v.push(position),
-                None => {
-                    parents.insert(new_position, vec![position]);
-                }
-                Some(_) => {}
+                // We haven't been here before, fill in the score.
+                None => cost[new_direction as usize] = Some(new_score),
             }
 
             // This is a valid next step, continue from there later.
@@ -234,51 +147,111 @@ fn search(
         }
     }
 
-    let mut benches: FxHashSet<Coords> = FxHashSet::default();
-    let mut current = vec![finish];
-    while let Some(p) = current.pop() {
-        benches.insert(p);
-        current.extend(
-            parents
-                .get(&p)
-                .unwrap_or(&vec![])
-                .iter()
-                .filter(|c| !benches.contains(c)),
-        );
-    }
-    (
-        costs[finish.1 as usize][finish.0 as usize][0].expect("no solution found"),
-        benches.len(),
-    )
+    let min_cost = costs[finish.0 as usize][finish.1 as usize]
+        .into_iter()
+        .min()
+        .flatten()
+        .expect("no solution found");
+    let fields = min_path_fields(&walls, &costs, start, finish);
+
+    (min_cost, fields.len())
 }
-// use itertools::Itertools;
-// println!(
-//     "{:?}",
-//     benches
-//         .iter()
-//         .sorted_by(|a, b| a.0.cmp(&b.0).then(a.1.cmp(&b.1)))
-//         .collect_vec()
-// );
-// for (k, v) in parents
-//     .iter()
-//     .sorted_by(|(a, _), (b, _)| a.0.cmp(&b.0).then(a.1.cmp(&b.1)))
-// {
-//     println!("{k:?}: {v:?}");
-// }
-// for line in costs {
-//     for entry in line {
-//         print!(
-//             "{:>5}",
-//             entry
-//                 .iter()
-//                 .copied()
-//                 .reduce(|a, b| a.min(b))
-//                 .flatten()
-//                 .unwrap_or(0)
-//         );
-//     }
-//     println!();
-// }
+
+fn min_path_fields(
+    walls: &FxHashSet<Coords>,
+    costs: &[[[Option<usize>; 4]; 141]; 141],
+    start: Coords,
+    finish: Coords,
+) -> FxHashSet<Coords> {
+    let mut cost_to_visit = [[usize::MAX; 141]; 141];
+    let mut benches = [[[false; 4]; 141]; 141];
+    let mut queue = BinaryHeap::from([Possibility {
+        position: start,
+        direction: Direction::East,
+        score: costs[start.0 as usize][start.1 as usize][Direction::East as usize].unwrap(),
+        finish,
+    }]);
+
+    while let Some(Possibility {
+        position,
+        direction,
+        score,
+        ..
+    }) = queue.pop()
+    {
+        let (x, y) = (position.0 as usize, position.1 as usize);
+
+        if position == finish {
+            benches[x][y][direction as usize] = true;
+            break;
+        }
+
+        let (turns, steps) = (score / 1000, score % 1000);
+        let min = cost_to_visit[x][y];
+        let (min_turns, min_steps) = (min / 1000, min % 1000);
+        if min_turns + 1 < turns {
+            continue;
+        }
+        if min_steps < steps {
+            continue;
+        }
+        if steps < min_steps {
+            benches[x][y].fill(false);
+        }
+
+        cost_to_visit[x][y] = score;
+        benches[x][y][direction as usize] = true;
+
+        if !walls.contains(&next_position(position, direction)) {
+            queue.push(Possibility {
+                position: next_position(position, direction),
+                direction,
+                score: score + 1,
+                finish,
+            })
+        }
+
+        if !walls.contains(&next_position(position, direction.turn_clockwise())) {
+            queue.push(Possibility {
+                position: next_position(position, direction.turn_clockwise()),
+                direction: direction.turn_clockwise(),
+                score: score + 1001,
+                finish,
+            })
+        }
+
+        if !walls.contains(&next_position(position, direction.turn_counterclockwise())) {
+            queue.push(Possibility {
+                position: next_position(position, direction.turn_counterclockwise()),
+                direction: direction.turn_counterclockwise(),
+                score: score + 1001,
+                finish,
+            })
+        }
+    }
+
+    let mut rv = FxHashSet::from_iter([start]);
+    let mut to_add = vec![finish];
+    while let Some(p @ (x, y)) = to_add.pop() {
+        if !rv.insert(p) {
+            continue;
+        }
+        let directions = benches[x as usize][y as usize];
+        if directions[Direction::East as usize] {
+            to_add.push(next_position(p, Direction::West));
+        }
+        if directions[Direction::West as usize] {
+            to_add.push(next_position(p, Direction::East));
+        }
+        if directions[Direction::North as usize] {
+            to_add.push(next_position(p, Direction::South));
+        }
+        if directions[Direction::South as usize] {
+            to_add.push(next_position(p, Direction::North));
+        }
+    }
+    rv
+}
 
 fn next_position((x, y): Coords, direction: Direction) -> Coords {
     match direction {
