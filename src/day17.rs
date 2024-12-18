@@ -42,16 +42,15 @@ fn part_1(computer: &Computer) -> String {
 
 fn part_2(computer: &Computer) -> u128 {
     let mut computer = computer.to_owned();
-    let target = computer.program.clone();
     let mut a = 0;
-    'outer: for digit in 0..computer.program.len() {
+    for digit in 0..computer.program.len() {
+        a *= 8;
         for i in 0.. {
-            computer.reset(i + a * 8);
+            computer.reset(i + a);
             computer.run();
-            if computer.output[..] == target[target.len() - digit - 1..] {
-                a *= 8;
+            if computer.output == computer.program[computer.program.len() - digit - 1..] {
                 a += i;
-                continue 'outer;
+                break;
             }
         }
     }
@@ -71,12 +70,12 @@ struct Computer {
 impl Computer {
     #[inline(always)]
     fn arg(&self) -> u128 {
-        unsafe { *self.program.get_unchecked(self.ptr + 1) }
+        self.program[self.ptr + 1]
     }
 
     #[inline(always)]
     fn combo_arg(&self) -> u128 {
-        let val = unsafe { *self.program.get_unchecked(self.ptr + 1) };
+        let val = self.program[self.ptr + 1];
         match val {
             0..=3 => val,
             4 => self.a,
@@ -88,7 +87,7 @@ impl Computer {
     }
 
     fn step(&mut self) {
-        let opcode = unsafe { *self.program.get_unchecked(self.ptr) };
+        let opcode = self.program[self.ptr];
         match opcode {
             // adv
             0 => {
