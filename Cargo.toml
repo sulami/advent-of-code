@@ -1,9 +1,8 @@
 [package]
-name = "advent-of-code-2024"
+name = "advent-of-code"
+description = "Advent of Code"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
 
