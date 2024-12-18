@@ -1,7 +1,12 @@
-crate::solve!("01");
+use crate::print_results;
+use std::time::Instant;
 
-fn parse(input: &str) -> String {
-    input.to_string()
+pub fn solve() {
+    let start = Instant::now();
+    let input = include_str!("inputs/01");
+    let pt1 = part_1(input);
+    let pt2 = part_2(input);
+    print_results(2015, 1, pt1, pt2, Some(start));
 }
 
 fn part_1(input: &str) -> i32 {
@@ -33,19 +38,19 @@ mod tests {
 
     #[test]
     fn test_part_1() {
-        assert_eq!(part_1(&parse("(())")), 0);
-        assert_eq!(part_1(&parse("()()")), 0);
-        assert_eq!(part_1(&parse("(((")), 3);
-        assert_eq!(part_1(&parse("(()(()(")), 3);
-        assert_eq!(part_1(&parse("))(((((")), 3);
-        assert_eq!(part_1(&parse("())")), -1);
-        assert_eq!(part_1(&parse("))(")), -1);
-        assert_eq!(part_1(&parse(")())())")), -3);
+        assert_eq!(part_1("(())"), 0);
+        assert_eq!(part_1("()()"), 0);
+        assert_eq!(part_1("((("), 3);
+        assert_eq!(part_1("(()(()("), 3);
+        assert_eq!(part_1("))((((("), 3);
+        assert_eq!(part_1("())"), -1);
+        assert_eq!(part_1("))("), -1);
+        assert_eq!(part_1(")())())"), -3);
     }
 
     #[test]
     fn test_part_2() {
-        assert_eq!(part_2(&parse(")")), 1);
-        assert_eq!(part_2(&parse("()())")), 5);
+        assert_eq!(part_2(")"), 1);
+        assert_eq!(part_2("()())"), 5);
     }
 }
