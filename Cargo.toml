@@ -12,6 +12,7 @@ name = "aoc"
 [dependencies]
 clap = { version = "4" , features = ["derive"] }
 itertools = "0.13"
+memoize = "0.4"
 nom = "7"
 rayon = "1"
 rustc-hash = "2"

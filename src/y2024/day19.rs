@@ -11,8 +11,10 @@ pub fn solve() {
     let start = Instant::now();
     let input = include_str!("inputs/19");
     let (towels, patterns) = parse(input);
-    let pt1 = part_1(&towels, &patterns);
-    print_results(2024, 19, pt1, 0, Some(start));
+    let results: Vec<_> = patterns.par_iter().map(|p| ways(p, &towels)).collect();
+    let pt1 = results.iter().filter(|n| **n > 0).count();
+    let pt2: usize = results.iter().sum();
+    print_results(2024, 19, pt1, pt2, Some(start));
 }
 
 fn parse(s: &str) -> (Vec<&str>, Vec<&str>) {
@@ -25,33 +27,9 @@ fn parse(s: &str) -> (Vec<&str>, Vec<&str>) {
     .1
 }
 
-fn part_1(towels: &[&str], patterns: &[&str]) -> usize {
-    // 311 is too high.
-    // 240 is too low.
-    patterns
-        .par_iter()
-        .filter(|p| is_possible(p, towels))
-        .count()
-}
-
-fn is_possible(pattern: &str, towels: &[&str]) -> bool {
-    let single_stripe_towels = towels
-        .iter()
-        .filter(|t| t.len() == 1)
-        .map(|t| t.chars().next().unwrap())
-        .collect_vec();
-    let multi_stripes_required = "wubrg"
-        .chars()
-        .filter(|s| !single_stripe_towels.contains(s))
-        .collect_vec();
-    let multi_towel_indices = pattern
-        .char_indices()
-        .filter(|(_, c)| multi_stripes_required.contains(c))
-        .collect_vec();
-
-    // For all stripes that we don't have single-stripe towels for, collect possible towel positions
-    // that could cover that stripe.
-    let crucial_stripes = multi_towel_indices.iter().map(|&(idx, c)|
+fn ways(pattern: &str, towels: &[&'static str]) -> usize {
+    // For all stripes, collect possible towel positions that could cover that stripe.
+    let crucial_stripes = pattern.char_indices().map(|(idx, c)|
         // Try each of the towels.
         towels.iter().flat_map(|towel|  {
             // Find all positions (anchors) of the required stripe within the towel.
@@ -77,33 +55,37 @@ fn is_possible(pattern: &str, towels: &[&str]) -> bool {
 
     if crucial_stripes.iter().any(|s| s.is_empty()) {
         // No options to cover one of the stripes, not possible.
-        return false;
+        return 0;
     }
 
     // Check that there is a combination of towels that cover the crucial stripes without
     // overlapping through DFS.
-    all_stripes_covered(None, &crucial_stripes)
+    all_stripes_covered(None, crucial_stripes)
 }
 
+#[memoize::memoize(CustomHasher: rustc_hash::FxHashMap, HasherInit: rustc_hash::FxHashMap::default())]
 fn all_stripes_covered(
     last_towel_end: Option<usize>,
-    stripes: &[Vec<(usize, &str, usize)>],
-) -> bool {
+    stripes: Vec<Vec<(usize, &'static str, usize)>>,
+) -> usize {
     let Some(options) = stripes.first() else {
-        return true;
+        // Covered everything, success.
+        return 1;
     };
     if last_towel_end.is_some_and(|lte| lte >= options.first().unwrap().0) {
         // This stripe already got covered by the previous towel.
-        return all_stripes_covered(last_towel_end, &stripes[1..]);
+        return all_stripes_covered(last_towel_end, stripes.into_iter().skip(1).collect());
     }
     options
         .iter()
-        .filter(|(idx, _, anchor)| {
-            last_towel_end.is_some_and(|lte| lte < idx - anchor) || last_towel_end.is_none()
+        .filter(|(idx, _, anchor)| last_towel_end.is_none_or(|lte| lte < idx - anchor))
+        .map(|(idx, towel, anchor)| {
+            all_stripes_covered(
+                Some(idx + towel.len() - anchor - 1),
+                stripes.iter().skip(1).cloned().collect(),
+            )
         })
-        .any(|(idx, towel, anchor)| {
-            all_stripes_covered(Some(idx + towel.len() - anchor - 1), &stripes[1..])
-        })
+        .sum()
 }
 
 #[cfg(test)]
@@ -125,6 +107,12 @@ bbrgwb";
     #[test]
     fn test_part_1() {
         let (towels, patterns) = parse(INPUT);
-        assert_eq!(part_1(&towels, &patterns), 6);
+        assert_eq!(patterns.iter().filter(|p| ways(p, &towels) > 0).count(), 6);
+    }
+
+    #[test]
+    fn test_part_2() {
+        let (towels, patterns) = parse(INPUT);
+        assert_eq!(patterns.iter().map(|p| ways(p, &towels)).sum::<usize>(), 16);
     }
 }
