@@ -1,5 +1,4 @@
-use std::fmt::Display;
-use std::time::Instant;
+use std::{fmt::Display, time::Instant};
 
 pub mod y2015;
 pub mod y2022;
@@ -21,6 +20,7 @@ macro_rules! solve {
     };
 }
 
+/// Prints results in standardized way, optionally also capturing timing data.
 pub fn print_results<A, B>(year: u32, day: u32, part_1: A, part_2: B, started_at: Option<Instant>)
 where
     A: Display,
@@ -30,7 +30,7 @@ where
         Some(t) => &format!("({:>3} ms)", t.elapsed().as_millis()),
         None => "",
     };
-    println!("{year}/{day:02}:      {timing}");
+    println!("{year}-{day:02}:      {timing}");
     println!("{part_1}");
     println!("{part_2}");
 }

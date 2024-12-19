@@ -15,7 +15,13 @@ fn main() {
     let args = Args::parse();
 
     let solvers: HashMap<u32, Vec<fn()>> = HashMap::from([
-        (2015, vec![advent_of_code::y2015::day_01::solve as fn()]),
+        (
+            2015,
+            vec![
+                advent_of_code::y2015::day_01::solve,
+                advent_of_code::y2015::day_02::solve,
+            ],
+        ),
         (
             2022,
             vec![
