@@ -88,6 +88,7 @@ fn main() {
                 advent_of_code::y2024::day16::solve,
                 advent_of_code::y2024::day17::solve,
                 advent_of_code::y2024::day18::solve,
+                advent_of_code::y2024::day19::solve,
             ],
         ),
     ]);
