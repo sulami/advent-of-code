@@ -1,5 +1,7 @@
 use std::{fmt::Display, time::Instant};
 
+pub mod grid;
+
 pub mod y2015;
 pub mod y2022;
 pub mod y2023;
@@ -30,7 +32,7 @@ where
         Some(t) => &format!("({:>3} ms)", t.elapsed().as_millis()),
         None => "",
     };
-    println!("{year}-{day:02}:      {timing}");
-    println!("{part_1}");
-    println!("{part_2}");
+    println!("{year}-{day:02}:         {timing}");
+    println!("{part_1:>25}");
+    println!("{part_2:>25}");
 }
