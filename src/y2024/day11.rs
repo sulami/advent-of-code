@@ -2,7 +2,6 @@ use nom::{
     character::complete::{space1, u64 as parse_u64},
     multi::separated_list1,
 };
-use rustc_hash::FxHashMap;
 
 crate::solve!("11");
 
@@ -13,48 +12,32 @@ fn parse(input: &str) -> Vec<u64> {
 }
 
 fn part_1(stones: &[u64]) -> usize {
-    let mut cache = FxHashMap::default();
-    stones
-        .iter()
-        .map(|&s| stone_size((s, 25), &mut cache))
-        .sum()
+    stones.iter().map(|&s| stone_size((s, 25))).sum()
 }
 
 fn part_2(stones: &[u64]) -> usize {
-    let mut cache = FxHashMap::default();
-    stones
-        .iter()
-        .map(|&s| stone_size((s, 75), &mut cache))
-        .sum()
+    stones.iter().map(|&s| stone_size((s, 75))).sum()
 }
 
-fn stone_size(
-    key @ (stone, iterations): (u64, usize),
-    cache: &mut FxHashMap<(u64, usize), usize>,
-) -> usize {
+#[memoize::memoize(CustomHasher: rustc_hash::FxHashMap, HasherInit: rustc_hash::FxHashMap::default())]
+fn stone_size(key: (u64, usize)) -> usize {
+    let (stone, iterations) = key;
     if iterations == 0 {
         return 1;
     }
-    cache.get(&key).map(ToOwned::to_owned).unwrap_or_else(|| {
-        if stone == 0 {
-            let rv = stone_size((1, iterations - 1), cache);
-            cache.insert(key, rv);
-            return rv;
-        }
 
-        let digits = stone.checked_ilog10().unwrap_or(0) + 1;
-        if digits % 2 == 0 {
-            let a = stone_size((stone / 10_u64.pow(digits / 2), iterations - 1), cache);
-            let b = stone_size((stone % 10_u64.pow(digits / 2), iterations - 1), cache);
-            let rv = a + b;
-            cache.insert(key, rv);
-            return rv;
-        }
+    if stone == 0 {
+        return stone_size((1, iterations - 1));
+    }
 
-        let rv = stone_size((stone * 2024, iterations - 1), cache);
-        cache.insert(key, rv);
-        rv
-    })
+    let digits = stone.checked_ilog10().unwrap_or(0) + 1;
+    if digits % 2 == 0 {
+        let a = stone_size((stone / 10_u64.pow(digits / 2), iterations - 1));
+        let b = stone_size((stone % 10_u64.pow(digits / 2), iterations - 1));
+        return a + b;
+    }
+
+    stone_size((stone * 2024, iterations - 1))
 }
 
 #[cfg(test)]
