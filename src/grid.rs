@@ -3,7 +3,7 @@
 use std::fmt::{Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Bound, RangeBounds, Sub, SubAssign};
 
-#[derive(Copy, Clone, Default, Hash, PartialEq, Eq)]
+#[derive(Copy, Clone, Default, Hash, PartialEq, Eq, Ord, PartialOrd)]
 pub struct Coordinate {
     x: isize,
     y: isize,

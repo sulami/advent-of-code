@@ -22,5 +22,9 @@ criterion = "0.5"
 rand = "0.8"
 
 [[bench]]
+name = "days"
+harness = false
+
+[[bench]]
 name = "digits"
 harness = false
