@@ -1,19 +1,44 @@
 use crate::grid::Coordinate;
 use crate::print_results;
-use nom::InputIter;
-use rustc_hash::FxHashSet;
+use itertools::Itertools;
+use rustc_hash::{FxHashMap, FxHashSet};
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 use std::time::Instant;
 
 pub fn solve() {
-    let start = Instant::now();
-    let pt1 = part_1(include_str!("inputs/20"));
-    let pt2 = 0;
-    print_results(2024, 20, pt1, pt2, Some(start));
+    let t = Instant::now();
+    let (start, end, walls) = parse_input(include_str!("inputs/20"));
+    let costs = costs(&walls, start);
+    let baseline = *costs.get(&end).unwrap();
+    let pt1 = cheats_saving_n_ps(100, baseline, &costs, 2);
+    let pt2 = cheats_saving_n_ps(100, baseline, &costs, 20);
+    print_results(2024, 20, pt1, pt2, Some(t));
 }
 
-fn part_1(input: &str) -> usize {
+fn cheats_saving_n_ps(
+    min_savings: usize,
+    baseline: usize,
+    costs: &FxHashMap<Coordinate, usize>,
+    max_cheat_len: usize,
+) -> usize {
+    costs
+        .iter()
+        .cartesian_product(costs.iter())
+        .filter(|&((from, from_cost), (to, to_cost))| {
+            if !(2..=max_cheat_len).contains(&from.manhattan_distance(*to)) {
+                return false;
+            }
+            let new_cost = from_cost + from.manhattan_distance(*to) + to_cost.abs_diff(baseline);
+            if new_cost + min_savings <= baseline {
+                return true;
+            }
+            false
+        })
+        .count()
+}
+
+fn parse_input(input: &str) -> (Coordinate, Coordinate, FxHashSet<Coordinate>) {
     let (mut start, mut end) = (Coordinate::default(), Coordinate::default());
     let mut walls = FxHashSet::default();
     for (y, line) in input.lines().enumerate() {
@@ -27,31 +52,13 @@ fn part_1(input: &str) -> usize {
             }
         }
     }
-    let baseline = shortest_route(&walls, start, end).unwrap();
-    let mut skips = 0;
-    for skip in walls.clone().iter() {
-        if !skip.is_in_bounds(1..input.position(|c| c == '\n').unwrap() as isize - 1) {
-            continue;
-        }
-        walls.remove(skip);
-        if let Some(skip_time) = shortest_route(&walls, start, end) {
-            if baseline - skip_time >= 100 {
-                skips += 1;
-            }
-        }
-        walls.insert(*skip);
-    }
-    skips
+    (start, end, walls)
 }
 
-fn shortest_route(
-    walls: &FxHashSet<Coordinate>,
-    start: Coordinate,
-    end: Coordinate,
-) -> Option<usize> {
+fn costs(walls: &FxHashSet<Coordinate>, start: Coordinate) -> FxHashMap<Coordinate, usize> {
     let mut queue: BinaryHeap<(Reverse<usize>, Coordinate)> =
         BinaryHeap::from_iter([(Reverse(0), start)]);
-    let mut visited: FxHashSet<Coordinate> = FxHashSet::from_iter([start]);
+    let mut costs = FxHashMap::from_iter([(start, 0)]);
 
     while let Some((Reverse(time), position)) = queue.pop() {
         let options = [(0, 1), (0, -1), (1, 0), (-1, 0)]
@@ -59,19 +66,18 @@ fn shortest_route(
             .map(|d| (d, walls.contains(&(position + d))));
         for (direction, is_wall) in options {
             let new_position = position + direction;
-            if new_position == end {
-                return Some(time + 1);
-            }
             if is_wall {
                 continue;
             }
-            if !visited.insert(position + direction) {
+            if costs.contains_key(&new_position) {
                 continue;
             }
-            queue.push((Reverse(time + 1), position + direction));
+            costs.insert(new_position, time + 1);
+            queue.push((Reverse(time + 1), new_position));
         }
     }
-    None
+
+    costs
 }
 
 #[cfg(test)]
@@ -97,6 +103,19 @@ mod tests {
 
     #[test]
     fn test_part_1() {
-        assert_eq!(part_1(INPUT), 84);
+        let (start, end, walls) = parse_input(INPUT);
+        let costs = costs(&walls, start);
+        let baseline = *costs.get(&end).unwrap();
+        let pt1 = cheats_saving_n_ps(2, baseline, &costs, 2);
+        assert_eq!(pt1, 44);
+    }
+
+    #[test]
+    fn test_part_2() {
+        let (start, end, walls) = parse_input(INPUT);
+        let costs = costs(&walls, start);
+        let baseline = *costs.get(&end).unwrap();
+        let pt2 = cheats_saving_n_ps(50, baseline, &costs, 20);
+        assert_eq!(pt2, 285);
     }
 }

@@ -5,8 +5,8 @@ use std::ops::{Add, AddAssign, Bound, RangeBounds, Sub, SubAssign};
 
 #[derive(Copy, Clone, Default, Hash, PartialEq, Eq, Ord, PartialOrd)]
 pub struct Coordinate {
-    x: isize,
-    y: isize,
+    pub x: isize,
+    pub y: isize,
 }
 
 impl Coordinate {
