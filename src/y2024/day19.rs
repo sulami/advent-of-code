@@ -63,7 +63,7 @@ fn ways(pattern: &str, towels: &[&'static str]) -> usize {
     all_stripes_covered(None, crucial_stripes)
 }
 
-#[memoize::memoize(CustomHasher: rustc_hash::FxHashMap, HasherInit: rustc_hash::FxHashMap::default())]
+#[memoize::memoize(CustomHasher: ahash::AHashMap)]
 fn all_stripes_covered(
     last_towel_end: Option<usize>,
     stripes: Vec<Vec<(usize, &'static str, usize)>>,

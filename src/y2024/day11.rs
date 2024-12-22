@@ -19,7 +19,7 @@ fn part_2(stones: &[u64]) -> usize {
     stones.iter().map(|&s| stone_size((s, 75))).sum()
 }
 
-#[memoize::memoize(CustomHasher: rustc_hash::FxHashMap, HasherInit: rustc_hash::FxHashMap::default())]
+#[memoize::memoize(CustomHasher: ahash::AHashMap)]
 fn stone_size(key: (u64, usize)) -> usize {
     let (stone, iterations) = key;
     if iterations == 0 {

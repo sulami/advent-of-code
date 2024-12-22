@@ -10,6 +10,7 @@ edition = "2021"
 name = "aoc"
 
 [dependencies]
+ahash = "0.8"
 clap = { version = "4" , features = ["derive"] }
 itertools = "0.13"
 memoize = "0.4"

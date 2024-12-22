@@ -35,7 +35,7 @@ enum Button {
     Push,
 }
 
-#[memoize::memoize(CustomHasher: rustc_hash::FxHashMap, HasherInit: rustc_hash::FxHashMap::default())]
+#[memoize::memoize(CustomHasher: ahash::AHashMap)]
 fn button_cost(from_position: Coordinate, gap: Coordinate, button: Button, depth: usize) -> usize {
     if depth == 0 {
         return 1;
