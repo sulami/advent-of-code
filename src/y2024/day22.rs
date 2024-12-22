@@ -1,9 +1,8 @@
 use crate::print_results;
+use ahash::AHashMap;
 use itertools::Itertools;
 use std::iter;
 use std::time::Instant;
-
-use rayon::prelude::*;
 
 pub fn solve() {
     let start = Instant::now();
@@ -13,39 +12,30 @@ pub fn solve() {
         .collect_vec();
     let secrets = input.iter().map(|s| secrets(*s)).collect_vec();
     let pt1: i64 = secrets.iter().map(|ss| ss.last().unwrap()).sum();
-    let pcs = secrets
+    let pt2 = optimum_sales(&secrets);
+    print_results(2024, 22, pt1, pt2, Some(start));
+}
+
+fn optimum_sales(secrets: &[Vec<i64>]) -> i64 {
+    let mut sales = AHashMap::with_capacity(19_usize.pow(4));
+    let prices_with_diffs = secrets
         .iter()
         .zip(secrets.iter().map(|ss| price_changes(ss)))
         .collect_vec();
-    let mut most_bananas = 0;
-    for a in -9..=9 {
-        println!("{}/19", a + 10);
-        for b in -9..=9 {
-            for c in -9..=9 {
-                for d in -9..=9 {
-                    let seq = (a, b, c, d);
-                    let bananas = pcs
-                        .par_iter()
-                        .filter_map(|(prices, diffs)| {
-                            make_sale(seq, diffs).map(|idx| prices[idx] % 10)
-                        })
-                        .sum();
-                    most_bananas = most_bananas.max(bananas);
-                }
-            }
-        }
-    }
-    // 1800 is too high.
-    print_results(2024, 22, pt1, most_bananas, Some(start));
-}
-
-fn make_sale(seq: (i64, i64, i64, i64), changes: &[i64]) -> Option<usize> {
-    let first_match = changes
-        .iter()
-        .copied()
-        .tuple_windows::<(_, _, _, _)>()
-        .position(|window| window == seq)?;
-    Some(first_match + 4)
+    prices_with_diffs.iter().for_each(|(prices, diffs)| {
+        diffs
+            .iter()
+            .tuple_windows::<(_, _, _, _)>()
+            .enumerate()
+            .unique_by(|(_, diff)| *diff)
+            .for_each(|(idx, seq)| {
+                sales
+                    .entry(seq)
+                    .and_modify(|s: &mut i64| *s += prices[idx + 4] % 10)
+                    .or_insert(prices[idx + 4] % 10);
+            });
+    });
+    *sales.values().max().expect("no sales found")
 }
 
 fn secrets(mut init: i64) -> Vec<i64> {
@@ -83,5 +73,9 @@ mod tests {
     }
 
     #[test]
-    fn test_sales() {}
+    fn test_sales() {
+        let initial_secrets = vec![1, 2, 3, 2024];
+        let secrets = initial_secrets.into_iter().map(secrets).collect_vec();
+        assert_eq!(optimum_sales(&secrets), 23);
+    }
 }
