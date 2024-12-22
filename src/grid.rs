@@ -79,6 +79,22 @@ impl Coordinate {
     pub fn distance(self, other: Self) -> f32 {
         (self.x.abs_diff(other.x) as f32 + self.y.abs_diff(other.y) as f32).sqrt()
     }
+
+    /// Assumes X is right and Y is down.
+    pub fn turn_clockwise(self) -> Self {
+        Self {
+            x: -self.y,
+            y: self.x,
+        }
+    }
+
+    /// Assumes X is right and Y is down.
+    pub fn turn_counterclockwise(self) -> Self {
+        Self {
+            x: self.y,
+            y: -self.x,
+        }
+    }
 }
 
 impl Add for Coordinate {
