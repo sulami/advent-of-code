@@ -1,6 +1,7 @@
 use crate::print_results;
 use ahash::AHashMap;
 use itertools::Itertools;
+use rayon::prelude::*;
 use std::iter;
 use std::time::Instant;
 
@@ -17,34 +18,41 @@ pub fn solve() {
 }
 
 fn optimum_sales(secrets: &[Vec<i64>]) -> i64 {
-    let mut sales = AHashMap::with_capacity(19_usize.pow(4));
     let prices_with_diffs = secrets
         .iter()
         .zip(secrets.iter().map(|ss| price_changes(ss)))
         .collect_vec();
-    prices_with_diffs.iter().for_each(|(prices, diffs)| {
-        diffs
-            .iter()
-            .tuple_windows::<(_, _, _, _)>()
-            .enumerate()
-            .unique_by(|(_, diff)| *diff)
-            .for_each(|(idx, seq)| {
-                sales
-                    .entry(seq)
-                    .and_modify(|s: &mut i64| *s += prices[idx + 4] % 10)
-                    .or_insert(prices[idx + 4] % 10);
+    *prices_with_diffs
+        .par_iter()
+        .fold(AHashMap::new, |mut sales, (prices, diffs)| {
+            diffs
+                .iter()
+                .tuple_windows::<(_, _, _, _)>()
+                .enumerate()
+                .unique_by(|(_, diff)| *diff)
+                .for_each(|(idx, seq)| {
+                    sales
+                        .entry(seq)
+                        .and_modify(|s: &mut i64| *s += prices[idx + 4] % 10)
+                        .or_insert(prices[idx + 4] % 10);
+                });
+            sales
+        })
+        .reduce(AHashMap::new, |mut a, b| {
+            b.iter().for_each(|(k, v)| {
+                a.entry(*k).and_modify(|s| *s += *v).or_insert(*v);
             });
-    });
-    *sales.values().max().expect("no sales found")
+            a
+        })
+        .values()
+        .max()
+        .expect("no sales found")
 }
 
-fn secrets(mut init: i64) -> Vec<i64> {
-    iter::from_fn(|| {
-        init = next_secret(init);
-        Some(init)
-    })
-    .take(2_000)
-    .collect()
+fn secrets(init: i64) -> Vec<i64> {
+    iter::successors(Some(init), |secret| Some(next_secret(*secret)))
+        .take(2_000)
+        .collect()
 }
 
 fn price_changes(secrets: &[i64]) -> Vec<i64> {
