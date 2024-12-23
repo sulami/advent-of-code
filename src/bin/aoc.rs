@@ -22,6 +22,7 @@ fn main() {
                 advent_of_code::y2015::day_02::solve,
                 advent_of_code::y2015::day_03::solve,
                 advent_of_code::y2015::day_04::solve,
+                advent_of_code::y2015::day_05::solve,
             ],
         ),
         (
