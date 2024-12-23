@@ -13,6 +13,7 @@ name = "aoc"
 ahash = "0.8"
 clap = { version = "4" , features = ["derive"] }
 itertools = "0.13"
+md5 = "0.7"
 memoize = "0.4"
 nom = "7"
 rayon = "1"
