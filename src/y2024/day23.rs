@@ -32,43 +32,38 @@ fn part_1(connections: &HashMap<&str, Vec<&str>>) -> usize {
 }
 
 fn part_2(connections: &HashMap<&str, Vec<&str>>) -> String {
-    let clusters = clusterize(connections);
-    clusters
-        .into_iter()
-        .max_by_key(HashSet::len)
-        .unwrap()
+    largest_cluster(connections)
         .iter()
         .sorted_unstable()
         .join(",")
 }
 
-fn clusterize<'a>(connections: &HashMap<&'a str, Vec<&'a str>>) -> Vec<HashSet<&'a str>> {
-    let mut clusters = vec![];
+fn largest_cluster<'a>(connections: &HashMap<&'a str, Vec<&'a str>>) -> HashSet<&'a str> {
+    let mut largest_so_far = HashSet::default();
     for (&k, peers) in connections.iter() {
-        let mut cluster = HashSet::from_iter([k]);
-
-        let best_group = peers
+        if largest_so_far.contains(k) {
+            continue;
+        }
+        let groups = peers
             .iter()
             .powerset()
-            .filter(|group| !group.is_empty())
-            .filter(|group| {
-                group
-                    .iter()
-                    .tuple_combinations()
-                    .all(|(a, b)| connections[*a].contains(b))
-            })
-            .max_by_key(|group| group.len());
-
+            .filter(|group| group.len() >= largest_so_far.len())
+            .collect_vec();
+        let best_group = groups.into_iter().rev().find(|group| {
+            group
+                .iter()
+                .tuple_combinations()
+                .all(|(a, b)| connections[*a].contains(b))
+        });
         if let Some(group) = best_group {
-            cluster.extend(group);
+            largest_so_far = HashSet::from_iter([k]);
+            largest_so_far.extend(group);
         }
-
-        clusters.push(cluster);
     }
-    clusters
+    largest_so_far
 }
 
-fn build_connections<'a>(input: &'a str) -> HashMap<&'a str, Vec<&'a str>> {
+fn build_connections(input: &str) -> HashMap<&str, Vec<&str>> {
     input.lines().map(parse_connection).fold(
         HashMap::new(),
         |mut acc: HashMap<&str, Vec<&str>>, (a, b)| {
