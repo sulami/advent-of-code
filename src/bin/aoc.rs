@@ -97,6 +97,7 @@ fn main() {
                 advent_of_code::y2024::day21::solve,
                 advent_of_code::y2024::day22::solve,
                 advent_of_code::y2024::day23::solve,
+                advent_of_code::y2024::day24::solve,
             ],
         ),
     ]);
