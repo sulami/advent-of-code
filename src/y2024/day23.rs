@@ -16,7 +16,7 @@ pub fn solve() {
     );
 }
 
-fn part_1(connections: &HashMap<&str, Vec<&str>>) -> usize {
+fn part_1(connections: &HashMap<&str, HashSet<&str>>) -> usize {
     connections
         .iter()
         .filter(|(_, vs)| vs.len() >= 2)
@@ -31,14 +31,14 @@ fn part_1(connections: &HashMap<&str, Vec<&str>>) -> usize {
         .count()
 }
 
-fn part_2(connections: &HashMap<&str, Vec<&str>>) -> String {
+fn part_2(connections: &HashMap<&str, HashSet<&str>>) -> String {
     largest_cluster(connections)
         .iter()
         .sorted_unstable()
         .join(",")
 }
 
-fn largest_cluster<'a>(connections: &HashMap<&'a str, Vec<&'a str>>) -> HashSet<&'a str> {
+fn largest_cluster<'a>(connections: &HashMap<&'a str, HashSet<&'a str>>) -> HashSet<&'a str> {
     let mut largest_so_far = HashSet::default();
     for (&k, peers) in connections.iter() {
         if largest_so_far.contains(k) {
@@ -53,7 +53,7 @@ fn largest_cluster<'a>(connections: &HashMap<&'a str, Vec<&'a str>>) -> HashSet<
             group
                 .iter()
                 .tuple_combinations()
-                .all(|(a, b)| connections[*a].contains(b))
+                .all(|(a, b)| connections[*a].contains(*b))
         });
         if let Some(group) = best_group {
             largest_so_far = HashSet::from_iter([k]);
@@ -63,12 +63,12 @@ fn largest_cluster<'a>(connections: &HashMap<&'a str, Vec<&'a str>>) -> HashSet<
     largest_so_far
 }
 
-fn build_connections(input: &str) -> HashMap<&str, Vec<&str>> {
+fn build_connections(input: &str) -> HashMap<&str, HashSet<&str>> {
     input.lines().map(parse_connection).fold(
         HashMap::new(),
-        |mut acc: HashMap<&str, Vec<&str>>, (a, b)| {
-            acc.entry(a).or_default().push(b);
-            acc.entry(b).or_default().push(a);
+        |mut acc: HashMap<&str, HashSet<&str>>, (a, b)| {
+            acc.entry(a).or_default().insert(b);
+            acc.entry(b).or_default().insert(a);
             acc
         },
     )
