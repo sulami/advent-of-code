@@ -44,20 +44,14 @@ fn largest_cluster<'a>(connections: &HashMap<&'a str, HashSet<&'a str>>) -> Hash
         if largest_so_far.contains(k) {
             continue;
         }
-        let groups = peers
-            .iter()
-            .powerset()
-            .filter(|group| group.len() >= largest_so_far.len())
-            .collect_vec();
-        let best_group = groups.into_iter().rev().find(|group| {
-            group
-                .iter()
-                .tuple_combinations()
-                .all(|(a, b)| connections[*a].contains(*b))
+        let mut cluster = HashSet::from_iter([k]);
+        peers.iter().for_each(|peer| {
+            if cluster.is_subset(&connections[peer]) {
+                cluster.insert(peer);
+            }
         });
-        if let Some(group) = best_group {
-            largest_so_far = HashSet::from_iter([k]);
-            largest_so_far.extend(group);
+        if cluster.len() > largest_so_far.len() {
+            largest_so_far = cluster;
         }
     }
     largest_so_far
