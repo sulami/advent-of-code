@@ -38,19 +38,23 @@ fn part_2(
         HashSet::default(),
         0,
         HashSet::default(),
+        &mut HashMap::default(),
     )
     .expect("no solution found");
     swaps.into_iter().flatten().sorted_unstable().join(",")
 }
 
+/// Tries to find a set of exactly four swaps of gate outputs to make the system act as a binary
+/// adder with ripple carry.
 #[allow(clippy::unnecessary_to_owned)]
-fn find_swaps(
-    initial_values: &HashMap<&str, bool>,
-    mappings: HashMap<&str, (&str, &str, Gate)>,
-    swaps: HashSet<[String; 2]>,
+fn find_swaps<'a>(
+    initial_values: &HashMap<&'a str, bool>,
+    mappings: HashMap<&'a str, (&'a str, &'a str, Gate)>,
+    swaps: HashSet<[&'a str; 2]>,
     mut first_bad_bit: usize,
     mut good_gates: HashSet<String>,
-) -> Option<HashSet<[String; 2]>> {
+    sources_cache: &mut HashMap<String, HashSet<String>>,
+) -> Option<HashSet<[&'a str; 2]>> {
     let acceptance_test = |mappings: &HashMap<&str, (&str, &str, Gate)>| -> bool {
         [
             (0, 0),
@@ -86,7 +90,7 @@ fn find_swaps(
 
     first_bad_bit = (first_bad_bit..=45)
         .find(|&bit| {
-            if check_bit(bit, initial_values, &mappings) {
+            if check_bit(bit, initial_values, &mappings, sources_cache) {
                 good_gates
                     .extend(wire_gates(initial_values, &mappings, format!("z{bit:02}")).unwrap());
                 false
@@ -99,7 +103,7 @@ fn find_swaps(
     mappings
         .keys()
         .filter(|gate| !good_gates.contains(&gate.to_string()))
-        .filter(|gate| !swaps.iter().flatten().contains(&gate.to_string()))
+        .filter(|gate| !swaps.iter().flatten().contains(gate))
         .copied()
         .tuple_combinations()
         .par_bridge()
@@ -109,8 +113,14 @@ fn find_swaps(
             let b_val = new_mappings[b];
             new_mappings.insert(a, b_val);
             new_mappings.insert(b, a_val);
+            let mut sources_cache = HashMap::default();
 
-            if check_bit(first_bad_bit, initial_values, &new_mappings) {
+            if check_bit(
+                first_bad_bit,
+                initial_values,
+                &new_mappings,
+                &mut sources_cache,
+            ) {
                 let mut new_good_gates = good_gates.clone();
                 new_good_gates.extend(
                     wire_gates(
@@ -122,13 +132,14 @@ fn find_swaps(
                 );
                 let new_first_bad_bit = first_bad_bit + 1;
                 let mut new_swaps = swaps.clone();
-                new_swaps.insert([a.to_string(), b.to_string()]);
+                new_swaps.insert([a, b]);
                 return find_swaps(
                     initial_values,
                     new_mappings,
                     new_swaps,
                     new_first_bad_bit,
                     new_good_gates,
+                    &mut sources_cache,
                 );
             }
             None
@@ -136,17 +147,20 @@ fn find_swaps(
         .find_any(|_| true)
 }
 
+/// Returns true if the gates at a given bit are working correctly. Includes checking the carry by
+/// checking the next bit up, so if the gates for the next bit are broken, that will also flag the
+/// bit below it.
 fn check_bit(
     bit: usize,
     initial_values: &HashMap<&str, bool>,
     mappings: &HashMap<&str, (&str, &str, Gate)>,
+    sources_cache: &mut HashMap<String, HashSet<String>>,
 ) -> bool {
-    let mut sources_cache = HashMap::default();
     let target_sources = (0..=bit.min(44))
         .flat_map(|b| [format!("x{b:02}"), format!("y{b:02}")])
         .collect::<HashSet<_>>();
     let Some(bit_sources) = wire_sources(
-        &mut sources_cache,
+        sources_cache,
         initial_values,
         mappings,
         100,
@@ -163,7 +177,7 @@ fn check_bit(
             .flat_map(|b| [format!("x{b:02}"), format!("y{b:02}")])
             .collect::<HashSet<_>>();
         if wire_sources(
-            &mut sources_cache,
+            sources_cache,
             initial_values,
             mappings,
             100,
