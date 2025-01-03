@@ -134,20 +134,6 @@ mod tests {
 456A
 379A";
 
-    /// To match up against the notation used in the examples.
-    fn ops_from_str(s: &str) -> Vec<Button> {
-        s.chars()
-            .map(|c| match c {
-                '^' => Button::ArrowKey(UP),
-                'v' => Button::ArrowKey(DOWN),
-                '>' => Button::ArrowKey(RIGHT),
-                '<' => Button::ArrowKey(LEFT),
-                'A' => Button::Push,
-                _ => panic!("invalid opcode"),
-            })
-            .collect()
-    }
-
     #[test]
     fn test_simple() {
         assert_eq!(complexity("029A", 1), 12 * 29);

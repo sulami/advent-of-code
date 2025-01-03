@@ -391,6 +391,23 @@ y02: 0
 x00 AND y00 -> z00
 x01 XOR y01 -> z01
 x02 OR y02 -> z02";
-        assert_eq!(parse_input(input), (HashMap::new(), HashMap::new()));
+        assert_eq!(
+            parse_input(input),
+            (
+                HashMap::from_iter([
+                    ("x00", true),
+                    ("x01", true),
+                    ("x02", true),
+                    ("y00", false),
+                    ("y01", true),
+                    ("y02", false),
+                ]),
+                HashMap::from_iter([
+                    ("z00", ("x00", "y00", Gate::And)),
+                    ("z01", ("x01", "y01", Gate::Xor)),
+                    ("z02", ("x02", "y02", Gate::Or)),
+                ])
+            )
+        );
     }
 }
