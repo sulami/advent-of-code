@@ -1,5 +1,5 @@
-use crate::grid::Coordinate;
-use crate::print_results;
+use crate::coordinate::Coordinate;
+use crate::{coordinate, print_results};
 use itertools::Itertools;
 use std::time::Instant;
 
@@ -21,11 +21,6 @@ fn complexity(code: &str, operators: usize) -> usize {
     }
     cost * code[..3].parse::<usize>().unwrap()
 }
-
-const UP: Coordinate = Coordinate { x: 0, y: -1 };
-const DOWN: Coordinate = Coordinate { x: 0, y: 1 };
-const LEFT: Coordinate = Coordinate { x: -1, y: 0 };
-const RIGHT: Coordinate = Coordinate { x: 1, y: 0 };
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
 enum Button {
@@ -61,7 +56,12 @@ fn button_cost(from_position: Coordinate, gap: Coordinate, button: Button, depth
                     // Avoid sequences that would lead to invalid moves on this robot.
                     return None;
                 }
-                cost += button_cost(upstream_position, (0, 0).into(), *next_button, depth - 1);
+                cost += button_cost(
+                    upstream_position,
+                    Coordinate::default(),
+                    *next_button,
+                    depth - 1,
+                );
                 upstream_position = button_coordinates(*next_button);
             }
             Some((sequence, cost))
@@ -98,10 +98,10 @@ fn button_directions(button: Button) -> Coordinate {
 /// Returns the coordinates of the button in question.
 fn button_coordinates(button: Button) -> Coordinate {
     match button {
-        Button::ArrowKey(RIGHT) => (2, 1).into(),
-        Button::ArrowKey(LEFT) => (0, 1).into(),
-        Button::ArrowKey(DOWN) => (1, 1).into(),
-        Button::ArrowKey(UP) => (1, 0).into(),
+        Button::ArrowKey(coordinate::RIGHT) => (2, 1).into(),
+        Button::ArrowKey(coordinate::LEFT) => (0, 1).into(),
+        Button::ArrowKey(coordinate::DOWN) => (1, 1).into(),
+        Button::ArrowKey(coordinate::UP) => (1, 0).into(),
         Button::ArrowKey(_) => panic!("invalid arrow key"),
         Button::Push => (2, 0).into(),
         Button::Numpad(n) => {

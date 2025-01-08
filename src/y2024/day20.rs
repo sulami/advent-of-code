@@ -1,5 +1,5 @@
-use crate::grid::Coordinate;
-use crate::print_results;
+use crate::coordinate::Coordinate;
+use crate::{coordinate, print_results};
 use itertools::Itertools;
 use rustc_hash::{FxHashMap, FxHashSet};
 use std::cmp::Reverse;
@@ -61,9 +61,7 @@ fn costs(walls: &FxHashSet<Coordinate>, start: Coordinate) -> FxHashMap<Coordina
     let mut costs = FxHashMap::from_iter([(start, 0)]);
 
     while let Some((Reverse(time), position)) = queue.pop() {
-        let options = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-            .map(Coordinate::from)
-            .map(|d| (d, walls.contains(&(position + d))));
+        let options = coordinate::DIRECTIONS.map(|d| (d, walls.contains(&(position + d))));
         for (direction, is_wall) in options {
             let new_position = position + direction;
             if is_wall {

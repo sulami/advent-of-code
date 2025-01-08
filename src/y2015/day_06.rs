@@ -1,4 +1,4 @@
-use crate::grid::Coordinate;
+use crate::coordinate::Coordinate;
 use crate::print_results;
 use itertools::Itertools;
 use nom::branch::alt;

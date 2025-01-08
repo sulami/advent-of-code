@@ -1,5 +1,5 @@
-use crate::grid::Coordinate;
-use crate::print_results;
+use crate::coordinate::Coordinate;
+use crate::{coordinate, print_results};
 use rustc_hash::FxHashSet;
 use std::time::Instant;
 
@@ -37,13 +37,12 @@ fn part_2(input: &str) -> usize {
 
 fn direction(c: char) -> Coordinate {
     match c {
-        '<' => (-1, 0),
-        '>' => (1, 0),
-        '^' => (0, -1),
-        'v' => (0, 1),
-        _ => (0, 0),
+        '<' => coordinate::LEFT,
+        '>' => coordinate::RIGHT,
+        '^' => coordinate::UP,
+        'v' => coordinate::DOWN,
+        _ => Default::default(),
     }
-    .into()
 }
 
 #[cfg(test)]

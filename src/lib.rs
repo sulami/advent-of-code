@@ -1,6 +1,6 @@
 use std::{fmt::Display, time::Instant};
 
-pub mod grid;
+pub mod coordinate;
 
 pub mod y2015;
 pub mod y2022;
