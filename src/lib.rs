@@ -6,6 +6,7 @@ pub mod y2015;
 pub mod y2022;
 pub mod y2023;
 pub mod y2024;
+pub mod y2025;
 
 #[macro_export]
 macro_rules! solve {

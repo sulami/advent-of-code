@@ -114,6 +114,12 @@ fn main() {
                 advent_of_code::y2024::day25::solve,
             ],
         ),
+        (
+            2025,
+            vec![
+                advent_of_code::y2025::day01::solve,
+            ],
+        )
     ]);
 
     match (args.year, args.days) {
