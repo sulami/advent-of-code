@@ -66,7 +66,7 @@ fn longest_route(map: &AdjacencyMap) -> usize {
         .unwrap()
 }
 
-fn parse(s: &str) -> AdjacencyMap {
+fn parse(s: &'_ str) -> AdjacencyMap<'_> {
     let mut rv = HashMap::default();
     s.lines().for_each(|line| {
         let parts = line.split_whitespace().collect_vec();

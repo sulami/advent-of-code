@@ -58,13 +58,13 @@ enum Gate<'a> {
     RShift(Value<'a>, usize),
 }
 
-fn parse_value(s: &str) -> Value {
+fn parse_value(s: &'_ str) -> Value<'_> {
     s.parse::<u16>()
         .map(Value::Signal)
         .unwrap_or(Value::Wire(s))
 }
 
-fn parse(s: &str) -> HashMap<&str, Gate> {
+fn parse(s: &'_ str) -> HashMap<&'_ str, Gate<'_>> {
     s.lines()
         .map(|l| {
             let parts = l.split_whitespace().collect_vec();

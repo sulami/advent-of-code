@@ -34,7 +34,7 @@ impl Reindeer<'_> {
     }
 }
 
-fn parse(s: &str) -> Vec<Reindeer> {
+fn parse(s: &'_ str) -> Vec<Reindeer<'_>> {
     s.lines()
         .map(|l| {
             let words = l.split_whitespace().collect_vec();

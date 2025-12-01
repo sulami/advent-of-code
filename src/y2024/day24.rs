@@ -348,7 +348,7 @@ type Parsed<'a> = (
     HashMap<&'a str, (&'a str, &'a str, Gate)>,
 );
 
-fn parse_input(s: &str) -> Parsed {
+fn parse_input(s: &str) -> Parsed<'_> {
     let initial_values: HashMap<_, _> = s
         .lines()
         .take_while(|l| !l.is_empty())
