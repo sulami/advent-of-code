@@ -118,8 +118,9 @@ fn main() {
             2025,
             vec![
                 advent_of_code::y2025::day01::solve,
+                advent_of_code::y2025::day02::solve,
             ],
-        )
+        ),
     ]);
 
     match (args.year, args.days) {
