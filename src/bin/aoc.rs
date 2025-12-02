@@ -119,6 +119,7 @@ fn main() {
             vec![
                 advent_of_code::y2025::day01::solve,
                 advent_of_code::y2025::day02::solve,
+                advent_of_code::y2025::day03::solve,
             ],
         ),
     ]);
