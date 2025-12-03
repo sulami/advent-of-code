@@ -120,6 +120,7 @@ fn main() {
                 advent_of_code::y2025::day01::solve,
                 advent_of_code::y2025::day02::solve,
                 advent_of_code::y2025::day03::solve,
+                advent_of_code::y2025::day04::solve,
             ],
         ),
     ]);

@@ -2,7 +2,7 @@
 name = "advent-of-code"
 description = "Advent of Code"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [lib]
 
@@ -11,7 +11,7 @@ name = "aoc"
 
 [dependencies]
 ahash = "0.8"
-clap = { version = "4" , features = ["derive"] }
+clap = { version = "4", features = ["derive"] }
 itertools = "0.13"
 md5 = "0.7"
 memoize = "0.4"

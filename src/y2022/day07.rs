@@ -157,9 +157,7 @@ fn build_fs_tree(entries: &[Entry]) -> Node {
                                 size: t.parse::<u32>().expect("invalid file size"),
                             }
                         };
-                        if let Node::Dir {
-                            ref mut contents, ..
-                        } = root
+                        if let Node::Dir { contents, .. } = root
                             .find_node(&pwd)
                             .expect("got lost trying to insert node")
                         {
