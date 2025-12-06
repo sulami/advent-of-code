@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use std::ops::RangeInclusive;
 
 crate::solve!("05");
@@ -7,21 +8,28 @@ type Parsed = (Vec<RangeInclusive<usize>>, Vec<usize>);
 fn parse(input: &str) -> Parsed {
     let (fresh, available) = input.split_once("\n\n").unwrap();
 
-    let fresh = fresh.lines().map(|line| {
-        let (from, to) = line.split_once('-').unwrap();
-        from.parse::<usize>().unwrap()..=to.parse().unwrap()
-    }).collect();
+    let fresh = fresh
+        .lines()
+        .map(|line| {
+            let (from, to) = line.split_once('-').unwrap();
+            from.parse::<usize>().unwrap()..=to.parse().unwrap()
+        })
+        .collect();
 
-    let available = available.lines().map(|line| line.parse().unwrap()).collect();
+    let available = available
+        .lines()
+        .map(|line| line.parse().unwrap())
+        .collect();
 
     (fresh, available)
 }
 
 fn part_1(x: &Parsed) -> usize {
     let (fresh, available) = x;
-    available.iter().filter(|ingredient| {
-        fresh.iter().any(|range| range.contains(ingredient))
-    }).count()
+    available
+        .iter()
+        .filter(|ingredient| fresh.iter().any(|range| range.contains(ingredient)))
+        .count()
 }
 
 fn part_2(x: &Parsed) -> usize {
@@ -29,17 +37,17 @@ fn part_2(x: &Parsed) -> usize {
     let mut fresh = fresh.clone();
     fresh.sort_unstable_by_key(|range| *range.start());
 
-    let mut idx = 1;
-    while idx < fresh.len() {
-        if fresh[idx-1].contains(&fresh[idx].start()) {
-            fresh[idx-1] = *fresh[idx-1].start()..=*fresh[idx-1].end().max(fresh[idx].end());
-            fresh.remove(idx);
-        } else {
-            idx += 1;
-        }
-    }
-
-    fresh.iter().map(|r: &RangeInclusive<usize>| 1 + r.end() - r.start()).sum()
+    fresh
+        .into_iter()
+        .coalesce(|a, b| {
+            if a.contains(b.start()) {
+                Ok(*a.start()..=*a.end().max(b.end()))
+            } else {
+                Err((a, b))
+            }
+        })
+        .map(|r| 1 + r.end() - r.start())
+        .sum()
 }
 
 #[cfg(test)]
