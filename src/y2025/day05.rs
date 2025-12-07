@@ -34,11 +34,10 @@ fn part_1(x: &Parsed) -> usize {
 
 fn part_2(x: &Parsed) -> usize {
     let (fresh, _) = x;
-    let mut fresh = fresh.clone();
-    fresh.sort_unstable_by_key(|range| *range.start());
-
     fresh
-        .into_iter()
+        .iter()
+        .sorted_unstable_by_key(|r| r.start())
+        .cloned()
         .coalesce(|a, b| {
             if a.contains(b.start()) {
                 Ok(*a.start()..=*a.end().max(b.end()))
