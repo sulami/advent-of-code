@@ -9,6 +9,7 @@ dependencies = [
  "ahash 0.8.11",
  "clap",
  "criterion",
+ "float-ord",
  "itertools 0.13.0",
  "md5",
  "memoize",
@@ -297,6 +298,12 @@ checksum = "b09cf3155332e944990140d967ff5eceb70df778b34f77d8075db46e4704e6d8"
 dependencies = [
  "num-traits",
 ]
+
+[[package]]
+name = "float-ord"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8ce81f49ae8a0482e4c55ea62ebbd7e5a686af544c00b9d090bba3ff9be97b3d"
 
 [[package]]
 name = "getrandom"

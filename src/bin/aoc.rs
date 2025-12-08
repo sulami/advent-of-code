@@ -124,6 +124,7 @@ fn main() {
                 advent_of_code::y2025::day05::solve,
                 advent_of_code::y2025::day06::solve,
                 advent_of_code::y2025::day07::solve,
+                advent_of_code::y2025::day08::solve,
             ],
         ),
     ]);

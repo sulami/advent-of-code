@@ -1,6 +1,7 @@
 use std::{fmt::Display, time::Instant};
 
 pub mod coordinate;
+pub mod coordinate_3d;
 
 pub mod y2015;
 pub mod y2022;
